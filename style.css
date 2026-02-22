@@ -9,6 +9,9 @@
   --panel: #fff9f0;
   --panel-border: rgba(31, 29, 26, 0.1);
   --shadow: 0 18px 40px rgba(31, 29, 26, 0.12);
+  --notice-bg: #fff3e0;
+  --notice-border: rgba(255, 122, 0, 0.2);
+  --comments-bg: #ffffff;
   --bg-gradient: radial-gradient(circle at 10% 10%, #ffe6c8, transparent 45%),
     radial-gradient(circle at 80% 0%, #ffd1a1, transparent 55%),
     linear-gradient(135deg, #fdf5e6, #f4efe6 60%);
@@ -25,6 +28,9 @@ body.theme-dark {
   --panel: #1a1b20;
   --panel-border: rgba(244, 241, 234, 0.12);
   --shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  --notice-bg: #2b2217;
+  --notice-border: rgba(255, 154, 61, 0.35);
+  --comments-bg: #14151b;
   --bg-gradient: radial-gradient(circle at 10% 10%, rgba(255, 154, 61, 0.18), transparent 45%),
     radial-gradient(circle at 80% 0%, rgba(255, 122, 0, 0.15), transparent 55%),
     linear-gradient(135deg, #0c0f14, #141720 60%);
@@ -435,8 +441,14 @@ th, td {
 }
 
 .notice {
-  background: #fff3e0;
-  border-color: rgba(255, 122, 0, 0.2);
+  background: var(--notice-bg);
+  border-color: var(--notice-border);
+}
+
+.comments #disqus_thread {
+  background: var(--comments-bg);
+  border-radius: 14px;
+  padding: 10px;
 }
 
 @keyframes fadeUp {
