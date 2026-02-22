@@ -126,6 +126,26 @@ h1 {
   gap: 12px;
 }
 
+.quick-links {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.quick-links a {
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px dashed transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.quick-links a:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
 .btn {
   border: none;
   padding: 12px 20px;
@@ -181,6 +201,33 @@ h1 {
 .panel-desc {
   color: var(--muted);
   font-size: 14px;
+}
+
+.content-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.content-card {
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  padding: 16px;
+  background: var(--surface);
+  display: grid;
+  gap: 8px;
+}
+
+.content-card h3 {
+  font-size: 16px;
+}
+
+.bullet-list {
+  list-style: disc;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
 .mode-grid {
