@@ -22,17 +22,26 @@ const SAMPLE_DRAWS = [
 ];
 
 const MAX_NUMBER = 45;
-const SET_COUNT = 3;
+const SET_COUNT = 5;
+const PAGE_SIZE = 20;
+const HISTORY_LIMIT = 12;
 const DATA_URL = '/data/lotto.json';
 
 let draws = [...SAMPLE_DRAWS];
 
 const generateBtn = document.getElementById('generateBtn');
-const refreshBtn = document.getElementById('refreshBtn');
 const recommendationsEl = document.getElementById('recommendations');
 const historyBody = document.getElementById('historyBody');
 const rangeText = document.getElementById('rangeText');
+const dataUpdated = document.getElementById('dataUpdated');
 const topNumbersEl = document.getElementById('topNumbers');
+const prevPageBtn = document.getElementById('prevPage');
+const nextPageBtn = document.getElementById('nextPage');
+const pageInfo = document.getElementById('pageInfo');
+const pastRecommendationsEl = document.getElementById('pastRecommendations');
+const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+
+let currentPage = 1;
 
 const getMode = () => {
   const selected = document.querySelector('input[name="mode"]:checked');
@@ -107,19 +116,26 @@ const generateSetByMode = (mode, freq) => {
   return generateHotSet(freq);
 };
 
-const renderRecommendations = () => {
+const generateRecommendationSets = () => {
   const mode = getMode();
   const freq = countFrequency();
-  recommendationsEl.innerHTML = '';
+  const sets = [];
 
   for (let i = 0; i < SET_COUNT; i += 1) {
-    const numbers = generateSetByMode(mode, freq);
+    sets.push(generateSetByMode(mode, freq));
+  }
+  return { mode, sets };
+};
+
+const renderRecommendationSets = (sets) => {
+  recommendationsEl.innerHTML = '';
+  sets.forEach((numbers, idx) => {
     const row = document.createElement('div');
     row.className = 'recommendation-row';
 
     const label = document.createElement('span');
     label.className = 'recommendation-label';
-    label.textContent = `SET ${i + 1}`;
+    label.textContent = `SET ${idx + 1}`;
 
     row.appendChild(label);
     numbers.forEach((num) => {
@@ -130,14 +146,81 @@ const renderRecommendations = () => {
     });
 
     recommendationsEl.appendChild(row);
+  });
+};
+
+const saveRecommendationHistory = (record) => {
+  const raw = localStorage.getItem('recommendationHistory');
+  const list = raw ? JSON.parse(raw) : [];
+  list.unshift(record);
+  const trimmed = list.slice(0, HISTORY_LIMIT);
+  localStorage.setItem('recommendationHistory', JSON.stringify(trimmed));
+};
+
+const renderPastRecommendations = () => {
+  if (!pastRecommendationsEl) return;
+  pastRecommendationsEl.innerHTML = '';
+  const raw = localStorage.getItem('recommendationHistory');
+  const list = raw ? JSON.parse(raw) : [];
+  if (list.length === 0) {
+    pastRecommendationsEl.innerHTML = '<p class="muted">아직 저장된 추천 기록이 없습니다.</p>';
+    return;
+  }
+
+  list.forEach((item, idx) => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'recommendation-row';
+
+    const label = document.createElement('span');
+    label.className = 'recommendation-label';
+    const date = new Date(item.ts);
+    label.textContent = `${idx + 1}. ${date.toLocaleString('ko-KR')} · ${item.modeLabel}`;
+    wrapper.appendChild(label);
+
+    item.sets.forEach((set) => {
+      const group = document.createElement('div');
+      group.className = 'recommendation-row';
+      set.forEach((num) => {
+        const ball = document.createElement('span');
+        ball.className = 'number-ball';
+        ball.textContent = num;
+        group.appendChild(ball);
+      });
+      wrapper.appendChild(group);
+    });
+
+    pastRecommendationsEl.appendChild(wrapper);
+  });
+};
+
+const renderRecommendations = ({ save = false } = {}) => {
+  const { mode, sets } = generateRecommendationSets();
+  const modeLabelMap = {
+    hot: '핫 넘버 집중',
+    cold: '콜드+랜덤 믹스',
+    balanced: '밸런스 조합'
+  };
+  renderRecommendationSets(sets);
+  if (save) {
+    saveRecommendationHistory({
+      ts: new Date().toISOString(),
+      mode,
+      modeLabel: modeLabelMap[mode] || mode,
+      sets
+    });
+    renderPastRecommendations();
   }
 };
 
 const renderHistory = () => {
   historyBody.innerHTML = '';
   const sorted = [...draws].sort((a, b) => b.round - a.round);
+  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  currentPage = Math.min(Math.max(currentPage, 1), totalPages);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageItems = sorted.slice(start, start + PAGE_SIZE);
 
-  sorted.forEach((draw) => {
+  pageItems.forEach((draw) => {
     const tr = document.createElement('tr');
     const numbers = draw.nums.map((n) => n.toString().padStart(2, '0')).join(', ');
 
@@ -153,6 +236,16 @@ const renderHistory = () => {
   const minRound = sorted[sorted.length - 1]?.round ?? '-';
   const maxRound = sorted[0]?.round ?? '-';
   rangeText.textContent = `${minRound}회 ~ ${maxRound}회 (${sorted.length}개 회차)`;
+
+  if (pageInfo) {
+    pageInfo.textContent = `페이지 ${currentPage} / ${totalPages}`;
+  }
+  if (prevPageBtn) {
+    prevPageBtn.disabled = currentPage <= 1;
+  }
+  if (nextPageBtn) {
+    nextPageBtn.disabled = currentPage >= totalPages;
+  }
 };
 
 const renderTopNumbers = () => {
@@ -179,7 +272,9 @@ const loadDrawsFromJson = async () => {
       throw new Error('invalid data');
     }
     draws = data.draws;
-    rangeText.textContent = `데이터 업데이트: ${data.updatedAt?.slice(0, 10) || '-'} · ${data.count}개 회차`;
+    if (dataUpdated) {
+      dataUpdated.textContent = `데이터 업데이트: ${data.updatedAt?.slice(0, 10) || '-'} · ${data.count}개 회차`;
+    }
   } catch (err) {
     console.warn('데이터 로딩 실패, 샘플 데이터를 사용합니다.', err);
     rangeText.textContent = '데이터 로딩 실패: 샘플 데이터를 표시합니다.';
@@ -188,15 +283,33 @@ const loadDrawsFromJson = async () => {
   renderRecommendations();
   renderHistory();
   renderTopNumbers();
+  renderPastRecommendations();
 };
 
 ['change'].forEach((evt) => {
   document.querySelectorAll('input[name="mode"]').forEach((input) => {
-    input.addEventListener(evt, renderRecommendations);
+    input.addEventListener(evt, () => renderRecommendations());
   });
 });
 
-generateBtn.addEventListener('click', renderRecommendations);
-refreshBtn.addEventListener('click', renderRecommendations);
+generateBtn.addEventListener('click', () => renderRecommendations({ save: true }));
+if (prevPageBtn) {
+  prevPageBtn.addEventListener('click', () => {
+    currentPage -= 1;
+    renderHistory();
+  });
+}
+if (nextPageBtn) {
+  nextPageBtn.addEventListener('click', () => {
+    currentPage += 1;
+    renderHistory();
+  });
+}
+if (clearHistoryBtn) {
+  clearHistoryBtn.addEventListener('click', () => {
+    localStorage.removeItem('recommendationHistory');
+    renderPastRecommendations();
+  });
+}
 
 loadDrawsFromJson();

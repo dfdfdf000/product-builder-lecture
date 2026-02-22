@@ -17,7 +17,6 @@
       <p class="sub">선택한 추천 방식에 따라 1~45 사이의 번호 6개를 조합합니다. 과거 회차별 당첨번호도 바로 확인할 수 있어요.</p>
       <div class="hero-actions">
         <button id="generateBtn" class="btn primary">추천 번호 생성</button>
-        <button id="refreshBtn" class="btn ghost">추천 다시 돌리기</button>
       </div>
     </div>
   </header>
@@ -57,6 +56,7 @@
         <div>
           <h3>데이터 범위</h3>
           <p id="rangeText">-</p>
+          <p id="dataUpdated" class="muted">-</p>
         </div>
         <div>
           <h3>상위 출현 번호</h3>
@@ -83,6 +83,20 @@
           <tbody id="historyBody"></tbody>
         </table>
       </div>
+      <div class="pagination">
+        <button id="prevPage" class="btn ghost">이전 20회</button>
+        <span id="pageInfo" class="page-info">-</span>
+        <button id="nextPage" class="btn ghost">다음 20회</button>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="history-reco-title">
+      <div class="panel-header">
+        <h2 id="history-reco-title">과거 추천 결과</h2>
+        <p class="panel-desc">최근에 생성한 추천 번호를 기록합니다. 브라우저에 저장되며, 새로고침 후에도 유지됩니다.</p>
+      </div>
+      <div id="pastRecommendations" class="recommendations"></div>
+      <button id="clearHistoryBtn" class="btn ghost">추천 기록 지우기</button>
     </section>
 
     <section class="panel notice" aria-labelledby="note-title">
