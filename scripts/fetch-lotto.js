@@ -81,10 +81,25 @@ async function findLatestRound(seed) {
   return low;
 }
 
+function loadExistingData() {
+  try {
+    const raw = fs.readFileSync(OUT_PATH, 'utf8');
+    return JSON.parse(raw);
+  } catch (err) {
+    return null;
+  }
+}
+
 async function main() {
-  const latest = await findLatestRound(SEED_ROUND);
+  const existing = loadExistingData();
+  const seedFromExisting = Number(existing?.latestRound) || SEED_ROUND;
+  const latest = await findLatestRound(seedFromExisting);
   if (!latest) {
-    console.error('Failed to find latest round.');
+    console.warn('Failed to find latest round. Keeping existing data.');
+    if (existing) {
+      console.log('Existing data retained.');
+      process.exit(0);
+    }
     process.exit(1);
   }
 
