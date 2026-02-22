@@ -9,6 +9,27 @@
   --panel: #fff9f0;
   --panel-border: rgba(31, 29, 26, 0.1);
   --shadow: 0 18px 40px rgba(31, 29, 26, 0.12);
+  --bg-gradient: radial-gradient(circle at 10% 10%, #ffe6c8, transparent 45%),
+    radial-gradient(circle at 80% 0%, #ffd1a1, transparent 55%),
+    linear-gradient(135deg, #fdf5e6, #f4efe6 60%);
+  --orb-a: #ffaf6f;
+  --orb-b: #ffc49c;
+}
+
+body.theme-dark {
+  --bg: #0e0f12;
+  --ink: #f4f1ea;
+  --muted: #b8b2a8;
+  --accent: #ff9a3d;
+  --accent-dark: #d4711a;
+  --panel: #1a1b20;
+  --panel-border: rgba(244, 241, 234, 0.12);
+  --shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  --bg-gradient: radial-gradient(circle at 10% 10%, rgba(255, 154, 61, 0.18), transparent 45%),
+    radial-gradient(circle at 80% 0%, rgba(255, 122, 0, 0.15), transparent 55%),
+    linear-gradient(135deg, #0c0f14, #141720 60%);
+  --orb-a: rgba(255, 154, 61, 0.55);
+  --orb-b: rgba(255, 122, 0, 0.45);
 }
 
 * {
@@ -19,9 +40,7 @@
 
 body {
   font-family: 'Nanum Gothic', 'Space Grotesk', system-ui, sans-serif;
-  background: radial-gradient(circle at 10% 10%, #ffe6c8, transparent 45%),
-    radial-gradient(circle at 80% 0%, #ffd1a1, transparent 55%),
-    linear-gradient(135deg, #fdf5e6, #f4efe6 60%);
+  background: var(--bg-gradient);
   color: var(--ink);
   min-height: 100vh;
 }
@@ -37,13 +56,13 @@ body {
 }
 
 .orb-a {
-  background: #ffaf6f;
+  background: var(--orb-a);
   top: -80px;
   left: -60px;
 }
 
 .orb-b {
-  background: #ffc49c;
+  background: var(--orb-b);
   bottom: -120px;
   right: -80px;
 }

@@ -40,8 +40,28 @@ const nextPageBtn = document.getElementById('nextPage');
 const pageNumbers = document.getElementById('pageNumbers');
 const pastRecommendationsEl = document.getElementById('pastRecommendations');
 const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+const themeToggle = document.getElementById('themeToggle');
 
 let currentPage = 1;
+const THEME_KEY = 'theme';
+
+const getStoredTheme = () => localStorage.getItem(THEME_KEY);
+const getSystemTheme = () => (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+const applyTheme = (theme) => {
+  const isDark = theme === 'dark';
+  document.body.classList.toggle('theme-dark', isDark);
+  if (themeToggle) {
+    themeToggle.textContent = isDark ? '라이트 모드' : '다크 모드';
+    themeToggle.setAttribute('aria-pressed', String(isDark));
+  }
+};
+
+const initTheme = () => {
+  const stored = getStoredTheme();
+  const initial = stored || getSystemTheme();
+  applyTheme(initial);
+};
 
 const getMode = () => {
   const selected = document.querySelector('input[name="mode"]:checked');
@@ -371,5 +391,15 @@ if (clearHistoryBtn) {
     renderPastRecommendations();
   });
 }
+
+if (themeToggle) {
+  themeToggle.addEventListener('click', () => {
+    const next = document.body.classList.contains('theme-dark') ? 'light' : 'dark';
+    localStorage.setItem(THEME_KEY, next);
+    applyTheme(next);
+  });
+}
+
+initTheme();
 
 loadDrawsFromJson();
