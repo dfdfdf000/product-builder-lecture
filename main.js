@@ -165,7 +165,7 @@ const renderRecommendationSets = (sets) => {
     if (set.bonus !== null) {
       const bonus = document.createElement('span');
       bonus.className = 'number-ball';
-      bonus.textContent = set.bonus;
+      bonus.textContent = `+${set.bonus}`;
       row.appendChild(bonus);
     }
 
@@ -222,7 +222,7 @@ const renderPastRecommendations = () => {
       if (set.bonus !== null) {
         const bonus = document.createElement('span');
         bonus.className = 'number-ball';
-        bonus.textContent = set.bonus;
+        bonus.textContent = `+${set.bonus}`;
         row.appendChild(bonus);
       }
 
