@@ -212,6 +212,40 @@ h1 {
   box-shadow: inset 0 0 0 2px rgba(255, 122, 0, 0.12);
 }
 
+.ball-range-1 {
+  background: #f9d648;
+  color: #1b1b1b;
+}
+
+.ball-range-2 {
+  background: #4aa6ff;
+  color: #0b1220;
+}
+
+.ball-range-3 {
+  background: #ff6b5c;
+  color: #1b0d0c;
+}
+
+.ball-range-4 {
+  background: #9aa1ab;
+  color: #111417;
+}
+
+.ball-range-5 {
+  background: #59c271;
+  color: #0b1a10;
+}
+
+.bonus-sep {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: var(--muted);
+  margin: 0 6px;
+}
+
 .stats {
   display: grid;
   gap: 12px;

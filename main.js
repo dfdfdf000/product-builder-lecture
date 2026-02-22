@@ -132,6 +132,28 @@ const pickBonus = (numbers, freq) => {
   return pool[0];
 };
 
+const getBallClass = (num) => {
+  if (num <= 10) return 'ball-range-1';
+  if (num <= 20) return 'ball-range-2';
+  if (num <= 30) return 'ball-range-3';
+  if (num <= 40) return 'ball-range-4';
+  return 'ball-range-5';
+};
+
+const createBall = (num) => {
+  const ball = document.createElement('span');
+  ball.className = `number-ball ${getBallClass(num)}`;
+  ball.textContent = num;
+  return ball;
+};
+
+const createBonusSeparator = () => {
+  const sep = document.createElement('span');
+  sep.className = 'bonus-sep';
+  sep.textContent = '+';
+  return sep;
+};
+
 const generateRecommendationSets = () => {
   const mode = getMode();
   const freq = countFrequency();
@@ -157,16 +179,11 @@ const renderRecommendationSets = (sets) => {
 
     row.appendChild(label);
     set.numbers.forEach((num) => {
-      const ball = document.createElement('span');
-      ball.className = 'number-ball';
-      ball.textContent = num;
-      row.appendChild(ball);
+      row.appendChild(createBall(num));
     });
     if (set.bonus !== null) {
-      const bonus = document.createElement('span');
-      bonus.className = 'number-ball';
-      bonus.textContent = `+${set.bonus}`;
-      row.appendChild(bonus);
+      row.appendChild(createBonusSeparator());
+      row.appendChild(createBall(set.bonus));
     }
 
     recommendationsEl.appendChild(row);
@@ -214,16 +231,11 @@ const renderPastRecommendations = () => {
       row.appendChild(setLabel);
 
       set.numbers.forEach((num) => {
-        const ball = document.createElement('span');
-        ball.className = 'number-ball';
-        ball.textContent = num;
-        row.appendChild(ball);
+        row.appendChild(createBall(num));
       });
       if (set.bonus !== null) {
-        const bonus = document.createElement('span');
-        bonus.className = 'number-ball';
-        bonus.textContent = `+${set.bonus}`;
-        row.appendChild(bonus);
+        row.appendChild(createBonusSeparator());
+        row.appendChild(createBall(set.bonus));
       }
 
       setsWrap.appendChild(row);
