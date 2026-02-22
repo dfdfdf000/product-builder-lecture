@@ -2,12 +2,93 @@
 const fs = require('fs');
 const path = require('path');
 
-const API_BASE = 'https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=';
+const API_BASE = 'https://www.dhlottery.co.kr/lt645/selectPstLt645Info.do?srchLtEpsd=';
 const OUT_PATH = path.join(__dirname, '..', 'data', 'lotto.json');
 const LOAD_COUNT = 200;
 const SEED_ROUND = Number(process.env.SEED_ROUND || 1200);
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const isOldShape = (obj) => (
+  obj
+  && typeof obj === 'object'
+  && obj.drwtNo1 !== undefined
+  && obj.drwtNo6 !== undefined
+  && obj.drwNo !== undefined
+);
+
+const isNewShape = (obj) => (
+  obj
+  && typeof obj === 'object'
+  && obj.tm1WnNo !== undefined
+  && obj.tm6WnNo !== undefined
+  && obj.ltEpsd !== undefined
+);
+
+const normalizeRecord = (obj) => {
+  if (isOldShape(obj)) {
+    return {
+      round: Number(obj.drwNo),
+      date: obj.drwNoDate || obj.drwNoDateYmd || obj.drwNoDateStr || '',
+      nums: [obj.drwtNo1, obj.drwtNo2, obj.drwtNo3, obj.drwtNo4, obj.drwtNo5, obj.drwtNo6].map(Number),
+      bonus: Number(obj.bnusNo)
+    };
+  }
+  if (isNewShape(obj)) {
+    return {
+      round: Number(obj.ltEpsd),
+      date: obj.ltRflYmd || obj.ltRflDt || obj.ltRflYmdStr || '',
+      nums: [obj.tm1WnNo, obj.tm2WnNo, obj.tm3WnNo, obj.tm4WnNo, obj.tm5WnNo, obj.tm6WnNo].map(Number),
+      bonus: Number(obj.bnsWnNo)
+    };
+  }
+  return null;
+};
+
+const findRecord = (data, targetRound) => {
+  const queue = [{ value: data, depth: 0 }];
+  const maxDepth = 6;
+  while (queue.length > 0) {
+    const { value, depth } = queue.shift();
+    if (!value || depth > maxDepth) continue;
+
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        const normalized = normalizeRecord(item);
+        if (normalized && normalized.round === targetRound) return normalized;
+        queue.push({ value: item, depth: depth + 1 });
+      }
+    } else if (typeof value === 'object') {
+      const normalized = normalizeRecord(value);
+      if (normalized && normalized.round === targetRound) return normalized;
+      for (const key of Object.keys(value)) {
+        queue.push({ value: value[key], depth: depth + 1 });
+      }
+    }
+  }
+
+  // fallback: return any record found
+  const fallbackQueue = [data];
+  while (fallbackQueue.length > 0) {
+    const value = fallbackQueue.shift();
+    if (!value) continue;
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        const normalized = normalizeRecord(item);
+        if (normalized) return normalized;
+        fallbackQueue.push(item);
+      }
+    } else if (typeof value === 'object') {
+      const normalized = normalizeRecord(value);
+      if (normalized) return normalized;
+      for (const key of Object.keys(value)) {
+        fallbackQueue.push(value[key]);
+      }
+    }
+  }
+
+  return null;
+};
 
 async function fetchDraw(round) {
   const url = `${API_BASE}${round}`;
@@ -26,13 +107,10 @@ async function fetchDraw(round) {
       const trimmed = text.trim();
       if (!trimmed.startsWith('{')) throw new Error('non-json');
       const data = JSON.parse(trimmed);
-      if (data.returnValue !== 'success') return null;
-      return {
-        round: data.drwNo,
-        date: data.drwNoDate,
-        nums: [data.drwtNo1, data.drwtNo2, data.drwtNo3, data.drwtNo4, data.drwtNo5, data.drwtNo6],
-        bonus: data.bnusNo
-      };
+      if (data.returnValue && data.returnValue !== 'success') return null;
+      const normalized = findRecord(data, round);
+      if (!normalized) return null;
+      return normalized;
     } catch (err) {
       if (attempt === 3) return null;
       await sleep(500 * attempt);
