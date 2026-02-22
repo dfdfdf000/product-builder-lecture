@@ -23,11 +23,9 @@ const SAMPLE_DRAWS = [
 
 const MAX_NUMBER = 45;
 const SET_COUNT = 3;
-const LOAD_COUNT = 30;
-const API_BASE = '/api/lotto?drwNo=';
+const DATA_URL = '/data/lotto.json';
 
 let draws = [...SAMPLE_DRAWS];
-let apiBlocked = false;
 
 const generateBtn = document.getElementById('generateBtn');
 const refreshBtn = document.getElementById('refreshBtn');
@@ -51,68 +49,6 @@ const countFrequency = () => {
   return freq;
 };
 
-const fetchDraw = async (round) => {
-  const res = await fetch(`${API_BASE}${round}`, { cache: 'no-store' });
-  if (!res.ok) {
-    if (res.status === 503) apiBlocked = true;
-    return null;
-  }
-  let data;
-  try {
-    data = await res.json();
-  } catch (err) {
-    apiBlocked = true;
-    return null;
-  }
-  if (data.returnValue === 'blocked') {
-    apiBlocked = true;
-    return null;
-  }
-  if (data.returnValue !== 'success') return null;
-  return {
-    round: data.drwNo,
-    date: data.drwNoDate,
-    nums: [data.drwtNo1, data.drwtNo2, data.drwtNo3, data.drwtNo4, data.drwtNo5, data.drwtNo6],
-    bonus: data.bnusNo
-  };
-};
-
-const findLatestRound = async (seedRound) => {
-  let low = 1;
-  let high = seedRound;
-  let data = await fetchDraw(high);
-
-  if (data) {
-    let step = 1;
-    while (data) {
-      low = high;
-      high += step;
-      step *= 2;
-      data = await fetchDraw(high);
-    }
-  } else {
-    let step = 1;
-    while (!data && high > 1) {
-      high = Math.max(1, high - step);
-      step *= 2;
-      data = await fetchDraw(high);
-    }
-    if (!data) return null;
-    low = high;
-    high += step;
-  }
-
-  while (low + 1 < high) {
-    const mid = Math.floor((low + high) / 2);
-    data = await fetchDraw(mid);
-    if (data) {
-      low = mid;
-    } else {
-      high = mid;
-    }
-  }
-  return low;
-};
 
 const pickWeighted = (pool, weights, count) => {
   const picked = new Set();
@@ -233,29 +169,20 @@ const renderTopNumbers = () => {
   });
 };
 
-const loadDrawsFromApi = async () => {
+const loadDrawsFromJson = async () => {
   rangeText.textContent = '로또 데이터를 불러오는 중...';
   try {
-    const seed = Number(localStorage.getItem('latestRound')) || 1200;
-    const latest = await findLatestRound(seed);
-    if (apiBlocked) throw new Error('blocked');
-    if (!latest) throw new Error('latest round not found');
-    const list = [];
-    for (let r = latest; r > Math.max(0, latest - LOAD_COUNT); r -= 1) {
-      const draw = await fetchDraw(r);
-      if (apiBlocked) throw new Error('blocked');
-      if (draw) list.push(draw);
+    const res = await fetch(DATA_URL, { cache: 'no-store' });
+    if (!res.ok) throw new Error('data fetch failed');
+    const data = await res.json();
+    if (!Array.isArray(data.draws) || data.draws.length === 0) {
+      throw new Error('invalid data');
     }
-    if (list.length === 0) throw new Error('empty list');
-    draws = list;
-    localStorage.setItem('latestRound', String(latest));
+    draws = data.draws;
+    rangeText.textContent = `데이터 업데이트: ${data.updatedAt?.slice(0, 10) || '-'} · ${data.count}개 회차`;
   } catch (err) {
-    console.warn('API 로딩 실패, 샘플 데이터를 사용합니다.', err);
-    if (err?.message === 'blocked') {
-      rangeText.textContent = 'API 차단/대기열로 인해 실데이터를 불러오지 못했습니다. (샘플 데이터 표시)';
-    } else {
-      rangeText.textContent = 'API 연결 실패: 샘플 데이터를 표시합니다.';
-    }
+    console.warn('데이터 로딩 실패, 샘플 데이터를 사용합니다.', err);
+    rangeText.textContent = '데이터 로딩 실패: 샘플 데이터를 표시합니다.';
     draws = [...SAMPLE_DRAWS];
   }
   renderRecommendations();
@@ -272,4 +199,4 @@ const loadDrawsFromApi = async () => {
 generateBtn.addEventListener('click', renderRecommendations);
 refreshBtn.addEventListener('click', renderRecommendations);
 
-loadDrawsFromApi();
+loadDrawsFromJson();

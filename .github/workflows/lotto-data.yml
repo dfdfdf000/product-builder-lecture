@@ -1,0 +1,37 @@
+name: Update Lotto Data
+
+on:
+  schedule:
+    - cron: '30 0 * * 6' # 매주 토요일 09:30 KST
+  workflow_dispatch: {}
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch lotto data
+        run: node scripts/fetch-lotto.js
+
+      - name: Commit and push if changed
+        run: |
+          if git diff --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/lotto.json
+          git commit -m "Update lotto data"
+          git push
