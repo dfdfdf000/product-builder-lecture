@@ -116,20 +116,38 @@ const generateSetByMode = (mode, freq) => {
   return generateHotSet(freq);
 };
 
+const pickBonus = (numbers, freq) => {
+  const pool = [...Array(MAX_NUMBER).keys()].map((n) => n + 1).filter((n) => !numbers.includes(n));
+  if (pool.length === 0) return null;
+  if (!freq) {
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+  const weights = freq.map((v) => (v === 0 ? 1 : v));
+  const total = pool.reduce((sum, n) => sum + weights[n], 0);
+  let r = Math.random() * total;
+  for (const n of pool) {
+    r -= weights[n];
+    if (r <= 0) return n;
+  }
+  return pool[0];
+};
+
 const generateRecommendationSets = () => {
   const mode = getMode();
   const freq = countFrequency();
   const sets = [];
 
   for (let i = 0; i < SET_COUNT; i += 1) {
-    sets.push(generateSetByMode(mode, freq));
+    const numbers = generateSetByMode(mode, freq);
+    const bonus = pickBonus(numbers, freq);
+    sets.push({ numbers, bonus });
   }
   return { mode, sets };
 };
 
 const renderRecommendationSets = (sets) => {
   recommendationsEl.innerHTML = '';
-  sets.forEach((numbers, idx) => {
+  sets.forEach((set, idx) => {
     const row = document.createElement('div');
     row.className = 'recommendation-row';
 
@@ -138,12 +156,18 @@ const renderRecommendationSets = (sets) => {
     label.textContent = `SET ${idx + 1}`;
 
     row.appendChild(label);
-    numbers.forEach((num) => {
+    set.numbers.forEach((num) => {
       const ball = document.createElement('span');
       ball.className = 'number-ball';
       ball.textContent = num;
       row.appendChild(ball);
     });
+    if (set.bonus !== null) {
+      const bonus = document.createElement('span');
+      bonus.className = 'number-ball';
+      bonus.textContent = set.bonus;
+      row.appendChild(bonus);
+    }
 
     recommendationsEl.appendChild(row);
   });
@@ -189,12 +213,18 @@ const renderPastRecommendations = () => {
       setLabel.textContent = `SET ${setIdx + 1}`;
       row.appendChild(setLabel);
 
-      set.forEach((num) => {
+      set.numbers.forEach((num) => {
         const ball = document.createElement('span');
         ball.className = 'number-ball';
         ball.textContent = num;
         row.appendChild(ball);
       });
+      if (set.bonus !== null) {
+        const bonus = document.createElement('span');
+        bonus.className = 'number-ball';
+        bonus.textContent = set.bonus;
+        row.appendChild(bonus);
+      }
 
       setsWrap.appendChild(row);
     });
