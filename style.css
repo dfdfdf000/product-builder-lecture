@@ -16,6 +16,9 @@
   --surface-strong: #ffffff;
   --table-head: #fff4e6;
   --input-bg: rgba(255, 255, 255, 0.9);
+  --radio-border: rgba(31, 29, 26, 0.35);
+  --radio-bg: #fffdf7;
+  --radio-dot: #ff7a00;
   --bg-gradient: radial-gradient(circle at 10% 10%, #ffe6c8, transparent 45%),
     radial-gradient(circle at 80% 0%, #ffd1a1, transparent 55%),
     linear-gradient(135deg, #fdf5e6, #f4efe6 60%);
@@ -39,6 +42,9 @@ body.theme-dark {
   --surface-strong: #262a33;
   --table-head: #242833;
   --input-bg: rgba(20, 22, 28, 0.9);
+  --radio-border: rgba(244, 241, 234, 0.35);
+  --radio-bg: #2a2d36;
+  --radio-dot: #ff9a3d;
   --bg-gradient: radial-gradient(circle at 10% 10%, rgba(255, 154, 61, 0.18), transparent 45%),
     radial-gradient(circle at 80% 0%, rgba(255, 122, 0, 0.15), transparent 55%),
     linear-gradient(135deg, #0c0f14, #141720 60%);
@@ -195,7 +201,28 @@ h1 {
 }
 
 .mode-card input {
-  accent-color: var(--accent);
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--radio-border);
+  background: var(--radio-bg);
+  display: inline-grid;
+  place-items: center;
+}
+
+.mode-card input::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transform: scale(0);
+  background: var(--radio-dot);
+  transition: transform 0.15s ease;
+}
+
+.mode-card input:checked::after {
+  transform: scale(1);
 }
 
 .mode-card:hover {
