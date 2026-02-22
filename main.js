@@ -27,6 +27,7 @@ const LOAD_COUNT = 30;
 const API_BASE = '/api/lotto?drwNo=';
 
 let draws = [...SAMPLE_DRAWS];
+let apiBlocked = false;
 
 const generateBtn = document.getElementById('generateBtn');
 const refreshBtn = document.getElementById('refreshBtn');
@@ -52,8 +53,21 @@ const countFrequency = () => {
 
 const fetchDraw = async (round) => {
   const res = await fetch(`${API_BASE}${round}`, { cache: 'no-store' });
-  if (!res.ok) return null;
-  const data = await res.json();
+  if (!res.ok) {
+    if (res.status === 503) apiBlocked = true;
+    return null;
+  }
+  let data;
+  try {
+    data = await res.json();
+  } catch (err) {
+    apiBlocked = true;
+    return null;
+  }
+  if (data.returnValue === 'blocked') {
+    apiBlocked = true;
+    return null;
+  }
   if (data.returnValue !== 'success') return null;
   return {
     round: data.drwNo,
@@ -224,10 +238,12 @@ const loadDrawsFromApi = async () => {
   try {
     const seed = Number(localStorage.getItem('latestRound')) || 1200;
     const latest = await findLatestRound(seed);
+    if (apiBlocked) throw new Error('blocked');
     if (!latest) throw new Error('latest round not found');
     const list = [];
     for (let r = latest; r > Math.max(0, latest - LOAD_COUNT); r -= 1) {
       const draw = await fetchDraw(r);
+      if (apiBlocked) throw new Error('blocked');
       if (draw) list.push(draw);
     }
     if (list.length === 0) throw new Error('empty list');
@@ -235,7 +251,11 @@ const loadDrawsFromApi = async () => {
     localStorage.setItem('latestRound', String(latest));
   } catch (err) {
     console.warn('API 로딩 실패, 샘플 데이터를 사용합니다.', err);
-    rangeText.textContent = 'API 연결 실패: 샘플 데이터를 표시합니다.';
+    if (err?.message === 'blocked') {
+      rangeText.textContent = 'API 차단/대기열로 인해 실데이터를 불러오지 못했습니다. (샘플 데이터 표시)';
+    } else {
+      rangeText.textContent = 'API 연결 실패: 샘플 데이터를 표시합니다.';
+    }
     draws = [...SAMPLE_DRAWS];
   }
   renderRecommendations();

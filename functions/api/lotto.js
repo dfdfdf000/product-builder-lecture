@@ -18,11 +18,27 @@ export async function onRequest(context) {
   try {
     const upstream = await fetch(target, {
       headers: {
-        'user-agent': 'Mozilla/5.0'
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0 Safari/537.36',
+        'accept': 'application/json, text/plain, */*',
+        'accept-language': 'ko-KR,ko;q=0.9,en;q=0.8',
+        'referer': 'https://www.dhlottery.co.kr/',
+        'origin': 'https://www.dhlottery.co.kr'
       }
     });
 
     const body = await upstream.text();
+    const trimmed = body.trim();
+    const looksLikeJson = trimmed.startsWith('{') && trimmed.endsWith('}');
+
+    if (!looksLikeJson) {
+      return new Response(JSON.stringify({ returnValue: 'blocked', message: 'upstream returned html' }), {
+        status: 503,
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
+          'cache-control': 'no-store'
+        }
+      });
+    }
 
     return new Response(body, {
       status: upstream.status,
