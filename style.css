@@ -260,9 +260,52 @@ h1 {
   flex-wrap: wrap;
 }
 
-.page-info {
+.page-numbers {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.page-numbers button {
+  border: 1px solid var(--panel-border);
+  background: #fff;
+  padding: 6px 10px;
+  border-radius: 999px;
   font-weight: 600;
+  cursor: pointer;
+}
+
+.page-numbers button.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: transparent;
+}
+
+.past-card {
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  padding: 14px;
+  background: #fffdf7;
+  display: grid;
+  gap: 10px;
+}
+
+.past-sets {
+  display: grid;
+  gap: 8px;
+}
+
+.set-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.set-label {
+  font-weight: 700;
   color: var(--muted);
+  min-width: 60px;
 }
 
 table {

@@ -37,7 +37,7 @@ const dataUpdated = document.getElementById('dataUpdated');
 const topNumbersEl = document.getElementById('topNumbers');
 const prevPageBtn = document.getElementById('prevPage');
 const nextPageBtn = document.getElementById('nextPage');
-const pageInfo = document.getElementById('pageInfo');
+const pageNumbers = document.getElementById('pageNumbers');
 const pastRecommendationsEl = document.getElementById('pastRecommendations');
 const clearHistoryBtn = document.getElementById('clearHistoryBtn');
 
@@ -168,28 +168,39 @@ const renderPastRecommendations = () => {
   }
 
   list.forEach((item, idx) => {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'recommendation-row';
+    const card = document.createElement('div');
+    card.className = 'past-card';
 
-    const label = document.createElement('span');
+    const label = document.createElement('div');
     label.className = 'recommendation-label';
     const date = new Date(item.ts);
     label.textContent = `${idx + 1}. ${date.toLocaleString('ko-KR')} · ${item.modeLabel}`;
-    wrapper.appendChild(label);
+    card.appendChild(label);
 
-    item.sets.forEach((set) => {
-      const group = document.createElement('div');
-      group.className = 'recommendation-row';
+    const setsWrap = document.createElement('div');
+    setsWrap.className = 'past-sets';
+
+    item.sets.forEach((set, setIdx) => {
+      const row = document.createElement('div');
+      row.className = 'set-row';
+
+      const setLabel = document.createElement('span');
+      setLabel.className = 'set-label';
+      setLabel.textContent = `SET ${setIdx + 1}`;
+      row.appendChild(setLabel);
+
       set.forEach((num) => {
         const ball = document.createElement('span');
         ball.className = 'number-ball';
         ball.textContent = num;
-        group.appendChild(ball);
+        row.appendChild(ball);
       });
-      wrapper.appendChild(group);
+
+      setsWrap.appendChild(row);
     });
 
-    pastRecommendationsEl.appendChild(wrapper);
+    card.appendChild(setsWrap);
+    pastRecommendationsEl.appendChild(card);
   });
 };
 
@@ -237,8 +248,19 @@ const renderHistory = () => {
   const maxRound = sorted[0]?.round ?? '-';
   rangeText.textContent = `${minRound}회 ~ ${maxRound}회 (${sorted.length}개 회차)`;
 
-  if (pageInfo) {
-    pageInfo.textContent = `페이지 ${currentPage} / ${totalPages}`;
+  if (pageNumbers) {
+    pageNumbers.innerHTML = '';
+    for (let i = 1; i <= totalPages; i += 1) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = i;
+      if (i === currentPage) btn.classList.add('active');
+      btn.addEventListener('click', () => {
+        currentPage = i;
+        renderHistory();
+      });
+      pageNumbers.appendChild(btn);
+    }
   }
   if (prevPageBtn) {
     prevPageBtn.disabled = currentPage <= 1;
@@ -286,11 +308,7 @@ const loadDrawsFromJson = async () => {
   renderPastRecommendations();
 };
 
-['change'].forEach((evt) => {
-  document.querySelectorAll('input[name="mode"]').forEach((input) => {
-    input.addEventListener(evt, () => renderRecommendations());
-  });
-});
+// 추천 방식 선택만으로는 결과를 갱신하지 않음
 
 generateBtn.addEventListener('click', () => renderRecommendations({ save: true }));
 if (prevPageBtn) {
