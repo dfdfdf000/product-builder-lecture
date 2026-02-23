@@ -544,27 +544,66 @@ body.theme-dark .panel:hover {
   font-size: 13px;
 }
 
-.chips {
+.top-number-list {
   list-style: none;
+  margin: 0;
+  padding: 2px 0 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
   gap: 8px;
-  padding: 4px 0 0;
-  max-width: 420px;
 }
 
-.chips li {
+.top-number-item {
+  display: grid;
+  grid-template-columns: 24px 52px 1fr 56px;
+  align-items: center;
+  gap: 8px;
   background: var(--surface-strong);
   border: 1px solid var(--panel-border);
-  padding: 6px 10px;
+  border-radius: 12px;
+  padding: 8px;
+}
+
+.top-number-rank {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--accent) 18%, transparent 82%);
+}
+
+.top-number-number {
+  font-weight: 700;
+}
+
+.top-number-bar-wrap {
+  height: 12px;
   border-radius: 999px;
-  font-weight: 600;
+  background: color-mix(in srgb, var(--surface) 74%, var(--bg) 26%);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--panel-border);
+}
+
+.top-number-bar {
+  position: absolute;
+  inset: 0;
+  width: var(--bar-width, 0%);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 75%, #ffffff 25%), var(--accent-dark));
+  transition: width 0.25s ease;
+}
+
+.top-number-count {
+  justify-self: end;
+  color: var(--muted);
   font-size: 13px;
-  text-align: center;
-  min-width: 0;
-  justify-self: stretch;
-  width: 100%;
-  box-sizing: border-box;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .table-wrap {
@@ -721,5 +760,25 @@ body.theme-dark tbody tr:hover {
   .number-ball {
     width: 36px;
     height: 36px;
+  }
+
+  .top-number-item {
+    grid-template-columns: 24px 44px 1fr 48px;
+    gap: 6px;
+    padding: 6px;
+  }
+
+  .top-number-rank {
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+  }
+
+  .top-number-count {
+    font-size: 12px;
+  }
+
+  .top-number-bar-wrap {
+    height: 10px;
   }
 }

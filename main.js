@@ -316,11 +316,38 @@ const renderTopNumbers = () => {
   const ranking = [...Array(MAX_NUMBER).keys()].map((n) => n + 1)
     .sort((a, b) => freq[b] - freq[a])
     .slice(0, 8);
+  const maxFreq = ranking.length > 0 ? freq[ranking[0]] : 1;
 
   topNumbersEl.innerHTML = '';
-  ranking.forEach((num) => {
+  ranking.forEach((num, idx) => {
     const li = document.createElement('li');
-    li.textContent = `${num} (${freq[num]}회)`;
+    li.className = 'top-number-item';
+
+    const rank = document.createElement('span');
+    rank.className = 'top-number-rank';
+    rank.textContent = String(idx + 1);
+
+    const number = document.createElement('span');
+    number.className = 'top-number-number';
+    number.textContent = `${num}번`;
+
+    const barWrap = document.createElement('span');
+    barWrap.className = 'top-number-bar-wrap';
+
+    const bar = document.createElement('span');
+    bar.className = 'top-number-bar';
+    const ratio = Math.max(1, Math.round((freq[num] / maxFreq) * 100));
+    bar.style.width = `${ratio}%`;
+
+    const count = document.createElement('span');
+    count.className = 'top-number-count';
+    count.textContent = `${freq[num]}회`;
+
+    barWrap.appendChild(bar);
+    li.appendChild(rank);
+    li.appendChild(number);
+    li.appendChild(barWrap);
+    li.appendChild(count);
     topNumbersEl.appendChild(li);
   });
 };
