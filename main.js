@@ -331,16 +331,16 @@ const renderTopNumbers = () => {
   }
 
   const maxFreq = Math.max(...ranking.map((num) => freq[num]), 1);
-  const width = 312;
-  const height = 168;
-  const padTop = 10;
-  const padRight = 10;
-  const padBottom = 28;
-  const padLeft = 18;
+  const width = 352;
+  const height = 196;
+  const padTop = 20;
+  const padRight = 12;
+  const padBottom = 34;
+  const padLeft = 20;
   const plotWidth = width - padLeft - padRight;
   const plotHeight = height - padTop - padBottom;
   const step = plotWidth / ranking.length;
-  const barWidth = Math.max(11, Math.min(18, step * 0.56));
+  const barWidth = Math.max(12, Math.min(20, step * 0.58));
 
   const gridLines = Array.from({ length: 3 }, (_, idx) => {
     const ratio = idx / 2;
@@ -360,12 +360,14 @@ const renderTopNumbers = () => {
     const y = padTop + plotHeight - barHeight;
     const centerX = x + (barWidth / 2);
     const fill = getBallColor(num);
+    const countY = Math.max(12, y - 6);
     return `
       <g class="chart-bar-group">
         <rect class="chart-bar" x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${barWidth.toFixed(2)}" height="${barHeight.toFixed(2)}" rx="4" ry="4" style="fill:${fill}">
           <title>${num}번 ${value}회</title>
         </rect>
-        <text class="chart-label" x="${centerX.toFixed(2)}" y="${(padTop + plotHeight + 14).toFixed(2)}" text-anchor="middle">${num}</text>
+        <text class="chart-count" x="${centerX.toFixed(2)}" y="${countY.toFixed(2)}" text-anchor="middle">${value}회</text>
+        <text class="chart-label" x="${centerX.toFixed(2)}" y="${(padTop + plotHeight + 18).toFixed(2)}" text-anchor="middle">${num}</text>
       </g>
     `;
   }).join('');
@@ -376,7 +378,7 @@ const renderTopNumbers = () => {
       <line class="chart-axis" x1="${padLeft}" y1="${(padTop + plotHeight).toFixed(2)}" x2="${(width - padRight).toFixed(2)}" y2="${(padTop + plotHeight).toFixed(2)}"></line>
       ${bars}
     </svg>
-    <p class="top-number-caption">상위 8개 번호 (막대 높이=출현 횟수)</p>
+    <p class="top-number-caption">상위 8개 번호 출현 횟수 그래프</p>
   `;
 };
 

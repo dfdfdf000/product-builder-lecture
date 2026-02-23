@@ -568,11 +568,11 @@ body.theme-dark .panel:hover {
   padding: 8px 8px 6px;
   display: grid;
   gap: 6px;
-  max-width: 336px;
+  max-width: 376px;
 }
 
 .top-number-svg {
-  width: min(100%, 312px);
+  width: min(100%, 352px);
   height: auto;
   display: block;
   overflow: hidden;
@@ -602,16 +602,22 @@ body.theme-dark .panel:hover {
   transform: scaleY(1.03);
 }
 
+.chart-count {
+  fill: var(--ink);
+  font-size: 9px;
+  font-weight: 700;
+}
+
 .chart-label {
   fill: var(--muted);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
 }
 
 .top-number-caption {
   margin: 0;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 10px;
   text-align: right;
 }
 
@@ -783,6 +789,10 @@ body.theme-dark tbody tr:hover {
   .top-number-chart {
     padding: 6px 6px 4px;
     max-width: none;
+  }
+
+  .chart-count {
+    font-size: 8px;
   }
 
   .chart-label {
