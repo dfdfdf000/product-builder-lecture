@@ -138,8 +138,9 @@ body.theme-dark .hero-inner {
 
 h1 {
   font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
-  font-size: clamp(28px, 4vw, 44px);
+  font-size: clamp(24px, 3.2vw, 36px);
   line-height: 1.15;
+  white-space: nowrap;
   margin-bottom: 16px;
 }
 
@@ -797,6 +798,10 @@ body.theme-dark tbody tr:hover {
   .hero-inner {
     border-radius: 22px;
     padding: 22px 16px;
+  }
+
+  h1 {
+    white-space: normal;
   }
 
   .panel {
