@@ -561,66 +561,65 @@ body.theme-dark .panel:hover {
   font-size: 13px;
 }
 
-.top-number-list {
-  list-style: none;
-  margin: 0;
-  padding: 2px 0 0;
-  display: grid;
-  gap: 8px;
-}
-
-.top-number-item {
-  display: grid;
-  grid-template-columns: 24px 52px 1fr 56px;
-  align-items: center;
-  gap: 8px;
+.top-number-chart {
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
   background: var(--surface-strong);
-  border: 1px solid var(--panel-border);
-  border-radius: 12px;
-  padding: 8px;
+  padding: 10px 10px 8px;
+  display: grid;
+  gap: 8px;
 }
 
-.top-number-rank {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: inline-grid;
-  place-items: center;
-  font-size: 12px;
+.top-number-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.chart-grid-line line {
+  stroke: color-mix(in srgb, var(--panel-border) 72%, transparent 28%);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+}
+
+.chart-grid-line text {
+  fill: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.chart-axis {
+  stroke: color-mix(in srgb, var(--ink) 26%, transparent 74%);
+  stroke-width: 1.2;
+}
+
+.chart-bar {
+  fill: color-mix(in srgb, var(--accent) 82%, var(--accent-dark) 18%);
+  transition: opacity 0.2s ease;
+}
+
+.chart-bar-group:hover .chart-bar {
+  opacity: 0.82;
+}
+
+.chart-value {
+  fill: var(--ink);
+  font-size: 10px;
   font-weight: 700;
-  color: var(--ink);
-  background: color-mix(in srgb, var(--accent) 18%, transparent 82%);
 }
 
-.top-number-number {
+.chart-label {
+  fill: var(--muted);
+  font-size: 11px;
   font-weight: 700;
 }
 
-.top-number-bar-wrap {
-  height: 12px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--surface) 74%, var(--bg) 26%);
-  position: relative;
-  overflow: hidden;
-  border: 1px solid var(--panel-border);
-}
-
-.top-number-bar {
-  position: absolute;
-  inset: 0;
-  width: var(--bar-width, 0%);
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 75%, #ffffff 25%), var(--accent-dark));
-  transition: width 0.25s ease;
-}
-
-.top-number-count {
-  justify-self: end;
+.top-number-caption {
+  margin: 0;
   color: var(--muted);
-  font-size: 13px;
-  font-weight: 700;
-  white-space: nowrap;
+  font-size: 12px;
+  text-align: right;
 }
 
 .table-wrap {
@@ -788,23 +787,24 @@ body.theme-dark tbody tr:hover {
     max-width: none;
   }
 
-  .top-number-item {
-    grid-template-columns: 24px 44px 1fr 48px;
-    gap: 6px;
-    padding: 6px;
+  .top-number-chart {
+    padding: 8px 8px 6px;
   }
 
-  .top-number-rank {
-    width: 22px;
-    height: 22px;
+  .chart-grid-line text {
+    font-size: 9px;
+  }
+
+  .chart-value {
+    font-size: 9px;
+  }
+
+  .chart-label {
+    font-size: 10px;
+  }
+
+  .top-number-caption {
+    text-align: left;
     font-size: 11px;
-  }
-
-  .top-number-count {
-    font-size: 12px;
-  }
-
-  .top-number-bar-wrap {
-    height: 10px;
   }
 }

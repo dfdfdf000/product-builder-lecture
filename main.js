@@ -316,40 +316,60 @@ const renderTopNumbers = () => {
   const ranking = [...Array(MAX_NUMBER).keys()].map((n) => n + 1)
     .sort((a, b) => freq[b] - freq[a])
     .slice(0, 8);
-  const maxFreq = ranking.length > 0 ? freq[ranking[0]] : 1;
+  if (!topNumbersEl) return;
+  if (ranking.length === 0) {
+    topNumbersEl.innerHTML = '<p class="muted">표시할 데이터가 없습니다.</p>';
+    return;
+  }
 
-  topNumbersEl.innerHTML = '';
-  ranking.forEach((num, idx) => {
-    const li = document.createElement('li');
-    li.className = 'top-number-item';
+  const maxFreq = Math.max(...ranking.map((num) => freq[num]), 1);
+  const width = 360;
+  const height = 240;
+  const padTop = 16;
+  const padRight = 14;
+  const padBottom = 40;
+  const padLeft = 34;
+  const plotWidth = width - padLeft - padRight;
+  const plotHeight = height - padTop - padBottom;
+  const step = plotWidth / ranking.length;
+  const barWidth = Math.max(18, Math.min(28, step * 0.62));
 
-    const rank = document.createElement('span');
-    rank.className = 'top-number-rank';
-    rank.textContent = String(idx + 1);
+  const gridLines = Array.from({ length: 5 }, (_, idx) => {
+    const ratio = idx / 4;
+    const y = padTop + plotHeight - (plotHeight * ratio);
+    const value = Math.round(maxFreq * ratio);
+    return `
+      <g class="chart-grid-line">
+        <line x1="${padLeft}" y1="${y.toFixed(2)}" x2="${(width - padRight).toFixed(2)}" y2="${y.toFixed(2)}" />
+        <text x="${(padLeft - 6).toFixed(2)}" y="${(y + 4).toFixed(2)}" text-anchor="end">${value}</text>
+      </g>
+    `;
+  }).join('');
 
-    const number = document.createElement('span');
-    number.className = 'top-number-number';
-    number.textContent = `${num}번`;
+  const bars = ranking.map((num, idx) => {
+    const value = freq[num];
+    const ratio = value / maxFreq;
+    const barHeight = Math.max(4, ratio * plotHeight);
+    const x = padLeft + (idx * step) + ((step - barWidth) / 2);
+    const y = padTop + plotHeight - barHeight;
+    const centerX = x + (barWidth / 2);
+    return `
+      <g class="chart-bar-group">
+        <rect class="chart-bar" x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${barWidth.toFixed(2)}" height="${barHeight.toFixed(2)}" rx="6" ry="6"></rect>
+        <text class="chart-value" x="${centerX.toFixed(2)}" y="${(y - 6).toFixed(2)}" text-anchor="middle">${value}</text>
+        <text class="chart-label" x="${centerX.toFixed(2)}" y="${(padTop + plotHeight + 18).toFixed(2)}" text-anchor="middle">${num}</text>
+      </g>
+    `;
+  }).join('');
 
-    const barWrap = document.createElement('span');
-    barWrap.className = 'top-number-bar-wrap';
-
-    const bar = document.createElement('span');
-    bar.className = 'top-number-bar';
-    const ratio = Math.max(1, Math.round((freq[num] / maxFreq) * 100));
-    bar.style.width = `${ratio}%`;
-
-    const count = document.createElement('span');
-    count.className = 'top-number-count';
-    count.textContent = `${freq[num]}회`;
-
-    barWrap.appendChild(bar);
-    li.appendChild(rank);
-    li.appendChild(number);
-    li.appendChild(barWrap);
-    li.appendChild(count);
-    topNumbersEl.appendChild(li);
-  });
+  topNumbersEl.innerHTML = `
+    <svg class="top-number-svg" viewBox="0 0 ${width} ${height}" aria-hidden="true">
+      ${gridLines}
+      <line class="chart-axis" x1="${padLeft}" y1="${(padTop + plotHeight).toFixed(2)}" x2="${(width - padRight).toFixed(2)}" y2="${(padTop + plotHeight).toFixed(2)}"></line>
+      ${bars}
+    </svg>
+    <p class="top-number-caption">상위 8개 번호 출현 횟수 그래프</p>
+  `;
 };
 
 const loadDrawsFromJson = async () => {
