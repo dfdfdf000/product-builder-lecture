@@ -143,6 +143,11 @@ h1 {
   margin-bottom: 16px;
 }
 
+.hero-title {
+  max-width: 17ch;
+  text-wrap: balance;
+}
+
 .sub {
   color: var(--muted);
   font-size: 16px;
