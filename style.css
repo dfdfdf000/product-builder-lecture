@@ -395,6 +395,8 @@ body.theme-dark .panel:hover {
   display: grid;
   gap: 12px;
   margin-bottom: 20px;
+  width: 100%;
+  justify-items: start;
 }
 
 .recommendation-row {
@@ -403,17 +405,21 @@ body.theme-dark .panel:hover {
   gap: 12px;
   flex-wrap: wrap;
   justify-content: flex-start;
+  width: max-content;
+  margin-right: auto;
 }
 
 .recommendation-label {
   font-weight: 700;
   color: var(--muted);
   min-width: 90px;
+  flex-shrink: 0;
 }
 
 .number-ball {
   width: 40px;
   height: 40px;
+  font-size: 14px;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
@@ -516,10 +522,15 @@ body.theme-dark .panel:hover {
 }
 
 .stats {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: 1fr;
-  gap: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.stats > div {
+  flex: 1 1 280px;
+  max-width: 420px;
 }
 
 .stats h3 {
@@ -536,10 +547,10 @@ body.theme-dark .panel:hover {
 .chips {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(66px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
   gap: 8px;
-  padding: 2px 0 0;
-  max-width: 660px;
+  padding: 4px 0 0;
+  max-width: 420px;
 }
 
 .chips li {
@@ -552,6 +563,8 @@ body.theme-dark .panel:hover {
   text-align: center;
   min-width: 0;
   justify-self: stretch;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .table-wrap {
