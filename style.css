@@ -565,14 +565,14 @@ body.theme-dark .panel:hover {
   border: 1px solid var(--panel-border);
   border-radius: 10px;
   background: var(--surface-strong);
-  padding: 6px 6px 5px;
+  padding: 8px 8px 6px;
   display: grid;
-  gap: 4px;
-  max-width: 292px;
+  gap: 6px;
+  max-width: 336px;
 }
 
 .top-number-svg {
-  width: min(100%, 272px);
+  width: min(100%, 312px);
   height: auto;
   display: block;
   overflow: hidden;
@@ -604,14 +604,14 @@ body.theme-dark .panel:hover {
 
 .chart-label {
   fill: var(--muted);
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 700;
 }
 
 .top-number-caption {
   margin: 0;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
   text-align: right;
 }
 

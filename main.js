@@ -331,16 +331,16 @@ const renderTopNumbers = () => {
   }
 
   const maxFreq = Math.max(...ranking.map((num) => freq[num]), 1);
-  const width = 272;
-  const height = 144;
-  const padTop = 8;
-  const padRight = 8;
-  const padBottom = 24;
-  const padLeft = 14;
+  const width = 312;
+  const height = 168;
+  const padTop = 10;
+  const padRight = 10;
+  const padBottom = 28;
+  const padLeft = 18;
   const plotWidth = width - padLeft - padRight;
   const plotHeight = height - padTop - padBottom;
   const step = plotWidth / ranking.length;
-  const barWidth = Math.max(10, Math.min(16, step * 0.52));
+  const barWidth = Math.max(11, Math.min(18, step * 0.56));
 
   const gridLines = Array.from({ length: 3 }, (_, idx) => {
     const ratio = idx / 2;
