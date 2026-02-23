@@ -7,13 +7,13 @@
   <meta name="description" content="로또 인사이트 데이터 출처, 편집 기준, 광고 정책, 개인정보·이용약관 연결 정책을 안내합니다." />
   <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
   <meta name="theme-color" content="#06b6d4" />
-  <link rel="canonical" href="https://product-builder-lecture-365.pages.dev/policy.html" />
+  <link rel="canonical" href="https://product-builder-lecture-365.pages.dev/policy" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="ko_KR" />
   <meta property="og:site_name" content="로또 인사이트" />
   <meta property="og:title" content="데이터 & 정책 | 로또 인사이트" />
   <meta property="og:description" content="데이터 출처와 정책 원칙을 공개해 신뢰할 수 있는 로또 인사이트를 제공합니다." />
-  <meta property="og:url" content="https://product-builder-lecture-365.pages.dev/policy.html" />
+  <meta property="og:url" content="https://product-builder-lecture-365.pages.dev/policy" />
   <meta property="og:image" content="/og-image.svg" />
   <meta property="og:image:alt" content="로또 인사이트 공유 이미지" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -21,14 +21,24 @@
   <meta name="twitter:description" content="데이터 출처, 편집 기준, 개인정보·약관 정책을 확인하세요." />
   <meta name="twitter:image" content="/og-image.svg" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="manifest" href="/site.webmanifest" />
-  <link href="/style.css" rel="stylesheet" />
+  <link rel="preload" href="/style.css" as="style" />
+  <link rel="stylesheet" href="/style.css" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="/style.css" /></noscript>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
       "name": "데이터 & 정책 | 로또 인사이트",
-      "url": "https://product-builder-lecture-365.pages.dev/policy.html",
+      "url": "https://product-builder-lecture-365.pages.dev/policy",
       "inLanguage": "ko-KR",
       "description": "데이터 출처와 운영 정책을 안내하는 페이지",
       "isPartOf": {
@@ -53,10 +63,10 @@
         <button id="themeToggle" class="btn ghost" type="button" aria-pressed="false">다크 모드</button>
       </div>
       <nav class="quick-links" aria-label="바로가기">
-        <a href="/about.html">프로젝트 소개</a>
-        <a href="/privacy.html">개인정보 처리방침</a>
-        <a href="/terms.html">이용약관</a>
-        <a href="/partner.html">제휴 문의</a>
+        <a href="/about">프로젝트 소개</a>
+        <a href="/privacy">개인정보 처리방침</a>
+        <a href="/terms">이용약관</a>
+        <a href="/partner">제휴 문의</a>
       </nav>
     </div>
   </header>
@@ -91,7 +101,7 @@
         <h2 id="policy-privacy">개인정보 처리</h2>
         <p class="panel-desc">개인정보는 문의 응대 목적 외에 사용하지 않습니다.</p>
       </div>
-      <p>자세한 내용은 <a href="/privacy.html">개인정보 처리방침</a>을 확인하세요.</p>
+      <p>자세한 내용은 <a href="/privacy">개인정보 처리방침</a>을 확인하세요.</p>
     </section>
 
     <section class="panel" aria-labelledby="policy-terms">
@@ -99,7 +109,7 @@
         <h2 id="policy-terms">이용약관</h2>
         <p class="panel-desc">서비스 이용 기준을 안내합니다.</p>
       </div>
-      <p>자세한 내용은 <a href="/terms.html">이용약관</a>을 확인하세요.</p>
+      <p>자세한 내용은 <a href="/terms">이용약관</a>을 확인하세요.</p>
     </section>
   </main>
   <script defer type="text/javascript" src="/theme.js"></script>

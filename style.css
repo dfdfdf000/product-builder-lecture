@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Nanum+Gothic:wght@400;700&display=swap');
-
 :root {
   --bg: #e9f4fb;
   --ink: #0f172a;
@@ -65,7 +63,7 @@ body.theme-dark {
 }
 
 body {
-  font-family: 'Nanum Gothic', 'Space Grotesk', system-ui, sans-serif;
+  font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', system-ui, sans-serif;
   background: var(--bg-gradient);
   color: var(--ink);
   min-height: 100vh;
@@ -139,7 +137,7 @@ body.theme-dark .hero-inner {
 }
 
 h1 {
-  font-family: 'Space Grotesk', 'Nanum Gothic', sans-serif;
+  font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
   font-size: clamp(28px, 4vw, 44px);
   line-height: 1.15;
   margin-bottom: 16px;
