@@ -172,14 +172,16 @@
         </div>
         <button id="generateBtn" class="btn primary">추천번호 생성</button>
       </div>
-      <div id="recommendations" class="recommendations"></div>
-      <div class="stats" aria-live="polite">
-        <div>
-          <h3>데이터 범위</h3>
-          <p id="rangeText">-</p>
-          <p id="dataUpdated" class="muted">-</p>
+      <div class="result-layout" aria-live="polite">
+        <div class="result-main">
+          <div id="recommendations" class="recommendations"></div>
+          <div class="stats">
+            <h3>데이터 범위</h3>
+            <p id="rangeText">-</p>
+            <p id="dataUpdated" class="muted">-</p>
+          </div>
         </div>
-        <div>
+        <div class="result-side">
           <h3>상위 출현 번호</h3>
           <ul id="topNumbers" class="top-number-list"></ul>
         </div>

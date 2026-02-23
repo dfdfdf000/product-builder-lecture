@@ -394,7 +394,7 @@ body.theme-dark .panel:hover {
 .recommendations {
   display: grid;
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 0;
   width: 100%;
   justify-items: start;
 }
@@ -521,22 +521,39 @@ body.theme-dark .panel:hover {
   margin: 0 6px;
 }
 
+.result-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(300px, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.result-main {
+  min-width: 0;
+  display: grid;
+  gap: 14px;
+}
+
 .stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  align-items: flex-start;
+  max-width: 460px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--panel-border);
+  background: var(--surface);
 }
 
-.stats > div {
-  flex: 1 1 280px;
-  max-width: 420px;
-}
-
-.stats h3 {
+.stats h3,
+.result-side h3 {
   font-size: 14px;
   color: var(--muted);
   margin-bottom: 6px;
+}
+
+.result-side {
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+  align-content: start;
 }
 
 .muted {
@@ -760,6 +777,15 @@ body.theme-dark tbody tr:hover {
   .number-ball {
     width: 36px;
     height: 36px;
+  }
+
+  .result-layout {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .stats {
+    max-width: none;
   }
 
   .top-number-item {
