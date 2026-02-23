@@ -271,6 +271,18 @@ body.theme-dark .panel:hover {
   margin-bottom: 20px;
 }
 
+.panel-header-with-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.panel-header-with-action h2 {
+  margin-bottom: 0;
+}
+
 .panel-header h2 {
   font-size: 22px;
   margin-bottom: 6px;
@@ -506,7 +518,7 @@ body.theme-dark .panel:hover {
 .stats {
   display: grid;
   gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: minmax(280px, 1fr) minmax(340px, 1.5fr);
 }
 
 .stats h3 {
@@ -522,9 +534,10 @@ body.theme-dark .panel:hover {
 
 .chips {
   list-style: none;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(74px, 1fr));
   gap: 8px;
-  flex-wrap: wrap;
+  padding: 2px 0 0;
 }
 
 .chips li {
@@ -534,6 +547,9 @@ body.theme-dark .panel:hover {
   border-radius: 999px;
   font-weight: 600;
   font-size: 13px;
+  text-align: center;
+  min-width: 0;
+  justify-self: stretch;
 }
 
 .table-wrap {

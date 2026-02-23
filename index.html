@@ -127,7 +127,6 @@
       <p class="sub">선택한 추천 방식에 따라 1~45 사이의 번호 6개를 조합합니다. 과거 회차별 당첨번호도 바로 확인할 수 있어요.</p>
       <p class="sub">본 서비스는 통계 기반 인사이트를 제공하며 실제 당첨을 보장하지 않습니다.</p>
       <div class="hero-actions">
-        <button id="generateBtn" class="btn primary">추천 번호 생성</button>
         <button class="btn ghost" type="button" data-share-button>공유하기</button>
         <button id="themeToggle" class="btn ghost" type="button" aria-pressed="false">다크 모드</button>
       </div>
@@ -167,8 +166,11 @@
     </section>
 
     <section class="panel" aria-labelledby="result-title">
-      <div class="panel-header">
-        <h2 id="result-title">추천 결과</h2>
+      <div class="panel-header panel-header-with-action">
+        <div>
+          <h2 id="result-title">추천번호</h2>
+        </div>
+        <button id="generateBtn" class="btn primary">추천번호 생성</button>
       </div>
       <div id="recommendations" class="recommendations"></div>
       <div class="stats" aria-live="polite">
