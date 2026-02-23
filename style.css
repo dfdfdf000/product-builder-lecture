@@ -164,7 +164,7 @@ h1 {
   justify-content: flex-start;
   text-align: left;
   width: 100%;
-  margin: 4px 0 0;
+  margin: 16px 0 0;
 }
 
 .quick-links a {
@@ -390,6 +390,7 @@ body.theme-dark .panel:hover {
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .recommendation-label {
