@@ -673,6 +673,40 @@ body.theme-dark .panel:hover {
   gap: 10px;
 }
 
+.past-recommendations-strip {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 2px 10px;
+  margin-bottom: 14px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.past-recommendations-strip .past-card {
+  flex: 0 0 min(560px, calc(100% - 8px));
+  scroll-snap-align: start;
+}
+
+.past-recommendations-strip > .muted {
+  margin: 4px 0;
+}
+
+.past-recommendations-strip::-webkit-scrollbar {
+  height: 8px;
+}
+
+.past-recommendations-strip::-webkit-scrollbar-thumb {
+  background: rgba(var(--accent-rgb), 0.36);
+  border-radius: 999px;
+}
+
+.past-recommendations-strip::-webkit-scrollbar-track {
+  background: color-mix(in srgb, var(--surface) 70%, transparent 30%);
+  border-radius: 999px;
+}
+
 .past-sets {
   display: grid;
   gap: 8px;
@@ -789,6 +823,15 @@ body.theme-dark tbody tr:hover {
   .top-number-chart {
     padding: 6px 6px 4px;
     max-width: none;
+  }
+
+  .past-recommendations-strip {
+    gap: 10px;
+    padding-bottom: 8px;
+  }
+
+  .past-recommendations-strip .past-card {
+    flex-basis: min(88vw, 460px);
   }
 
   .chart-count {

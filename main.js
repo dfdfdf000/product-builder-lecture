@@ -24,7 +24,7 @@ const SAMPLE_DRAWS = [
 const MAX_NUMBER = 45;
 const SET_COUNT = 5;
 const PAGE_SIZE = 20;
-const HISTORY_LIMIT = 12;
+const HISTORY_LIMIT = 8;
 const DATA_URL = '/data/lotto.json';
 
 let draws = [...SAMPLE_DRAWS];
@@ -197,9 +197,27 @@ const renderRecommendationSets = (sets) => {
   });
 };
 
+const getRecommendationHistory = () => {
+  try {
+    const raw = localStorage.getItem('recommendationHistory');
+    const list = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(list)) {
+      localStorage.removeItem('recommendationHistory');
+      return [];
+    }
+    const trimmed = list.slice(0, HISTORY_LIMIT);
+    if (trimmed.length !== list.length) {
+      localStorage.setItem('recommendationHistory', JSON.stringify(trimmed));
+    }
+    return trimmed;
+  } catch {
+    localStorage.removeItem('recommendationHistory');
+    return [];
+  }
+};
+
 const saveRecommendationHistory = (record) => {
-  const raw = localStorage.getItem('recommendationHistory');
-  const list = raw ? JSON.parse(raw) : [];
+  const list = getRecommendationHistory();
   list.unshift(record);
   const trimmed = list.slice(0, HISTORY_LIMIT);
   localStorage.setItem('recommendationHistory', JSON.stringify(trimmed));
@@ -208,8 +226,7 @@ const saveRecommendationHistory = (record) => {
 const renderPastRecommendations = () => {
   if (!pastRecommendationsEl) return;
   pastRecommendationsEl.innerHTML = '';
-  const raw = localStorage.getItem('recommendationHistory');
-  const list = raw ? JSON.parse(raw) : [];
+  const list = getRecommendationHistory();
   if (list.length === 0) {
     pastRecommendationsEl.innerHTML = '<p class="muted">아직 저장된 추천 기록이 없습니다.</p>';
     return;
