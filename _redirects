@@ -9,4 +9,9 @@
 /privacy/ https://product-builder-lecture-365.pages.dev/privacy 301
 /terms/ https://product-builder-lecture-365.pages.dev/terms 301
 /partner/ https://product-builder-lecture-365.pages.dev/partner 301
+/about /about.html 200
+/policy /policy.html 200
+/privacy /privacy.html 200
+/terms /terms.html 200
+/partner /partner.html 200
 /404 https://product-builder-lecture-365.pages.dev/404.html 404

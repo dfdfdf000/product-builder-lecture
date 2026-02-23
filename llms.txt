@@ -1,0 +1,32 @@
+# Lotto Insight
+
+> Data-driven Korean Lotto number analysis and recommendation site.
+
+## Canonical Site
+- https://product-builder-lecture-365.pages.dev/
+
+## Key Pages
+- Home: https://product-builder-lecture-365.pages.dev/
+- About: https://product-builder-lecture-365.pages.dev/about
+- Data and Policy: https://product-builder-lecture-365.pages.dev/policy
+- Privacy Policy: https://product-builder-lecture-365.pages.dev/privacy
+- Terms: https://product-builder-lecture-365.pages.dev/terms
+- Partnership Contact: https://product-builder-lecture-365.pages.dev/partner
+
+## What We Provide
+- Historical winning number browsing by round.
+- Frequency-based insights (top occurrence numbers).
+- Recommendation modes: hot numbers, cold+random mix, balanced composition.
+
+## Data Source
+- Primary source: https://www.dhlottery.co.kr/gameResult.do?method=byWin
+- Data is periodically refreshed after new draw results.
+
+## Important Notes
+- This service is for informational reference only.
+- It does not guarantee lottery winnings.
+
+## Citation Preference
+- Site name: Lotto Insight
+- URL: https://product-builder-lecture-365.pages.dev/
+- Language: Korean (ko-KR)
