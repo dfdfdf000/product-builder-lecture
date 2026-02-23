@@ -139,6 +139,14 @@ const getBallClass = (num) => {
   return 'ball-range-5';
 };
 
+const getBallColor = (num) => {
+  if (num <= 10) return '#f9d648';
+  if (num <= 20) return '#4aa6ff';
+  if (num <= 30) return '#ff6b5c';
+  if (num <= 40) return '#9aa1ab';
+  return '#59c271';
+};
+
 const createBall = (num) => {
   const ball = document.createElement('span');
   ball.className = `number-ball ${getBallClass(num)}`;
@@ -323,19 +331,19 @@ const renderTopNumbers = () => {
   }
 
   const maxFreq = Math.max(...ranking.map((num) => freq[num]), 1);
-  const width = 360;
-  const height = 240;
-  const padTop = 16;
-  const padRight = 14;
-  const padBottom = 40;
-  const padLeft = 34;
+  const width = 316;
+  const height = 186;
+  const padTop = 12;
+  const padRight = 10;
+  const padBottom = 30;
+  const padLeft = 28;
   const plotWidth = width - padLeft - padRight;
   const plotHeight = height - padTop - padBottom;
   const step = plotWidth / ranking.length;
-  const barWidth = Math.max(18, Math.min(28, step * 0.62));
+  const barWidth = Math.max(12, Math.min(22, step * 0.58));
 
-  const gridLines = Array.from({ length: 5 }, (_, idx) => {
-    const ratio = idx / 4;
+  const gridLines = Array.from({ length: 4 }, (_, idx) => {
+    const ratio = idx / 3;
     const y = padTop + plotHeight - (plotHeight * ratio);
     const value = Math.round(maxFreq * ratio);
     return `
@@ -353,11 +361,12 @@ const renderTopNumbers = () => {
     const x = padLeft + (idx * step) + ((step - barWidth) / 2);
     const y = padTop + plotHeight - barHeight;
     const centerX = x + (barWidth / 2);
+    const fill = getBallColor(num);
     return `
       <g class="chart-bar-group">
-        <rect class="chart-bar" x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${barWidth.toFixed(2)}" height="${barHeight.toFixed(2)}" rx="6" ry="6"></rect>
+        <rect class="chart-bar" x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${barWidth.toFixed(2)}" height="${barHeight.toFixed(2)}" rx="5" ry="5" style="fill:${fill}"></rect>
         <text class="chart-value" x="${centerX.toFixed(2)}" y="${(y - 6).toFixed(2)}" text-anchor="middle">${value}</text>
-        <text class="chart-label" x="${centerX.toFixed(2)}" y="${(padTop + plotHeight + 18).toFixed(2)}" text-anchor="middle">${num}</text>
+        <text class="chart-label" x="${centerX.toFixed(2)}" y="${(padTop + plotHeight + 16).toFixed(2)}" text-anchor="middle">${num}</text>
       </g>
     `;
   }).join('');

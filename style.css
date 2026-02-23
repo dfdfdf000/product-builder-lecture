@@ -563,11 +563,12 @@ body.theme-dark .panel:hover {
 
 .top-number-chart {
   border: 1px solid var(--panel-border);
-  border-radius: 14px;
+  border-radius: 12px;
   background: var(--surface-strong);
-  padding: 10px 10px 8px;
+  padding: 8px 8px 6px;
   display: grid;
-  gap: 8px;
+  gap: 6px;
+  max-width: 350px;
 }
 
 .top-number-svg {
@@ -580,12 +581,12 @@ body.theme-dark .panel:hover {
 .chart-grid-line line {
   stroke: color-mix(in srgb, var(--panel-border) 72%, transparent 28%);
   stroke-width: 1;
-  stroke-dasharray: 4 4;
+  stroke-dasharray: 3 4;
 }
 
 .chart-grid-line text {
   fill: var(--muted);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
 }
 
@@ -595,30 +596,33 @@ body.theme-dark .panel:hover {
 }
 
 .chart-bar {
-  fill: color-mix(in srgb, var(--accent) 82%, var(--accent-dark) 18%);
-  transition: opacity 0.2s ease;
+  stroke: color-mix(in srgb, var(--ink) 24%, transparent 76%);
+  stroke-width: 0.8;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  transform-origin: center bottom;
 }
 
 .chart-bar-group:hover .chart-bar {
-  opacity: 0.82;
+  opacity: 0.9;
+  transform: scaleY(1.03);
 }
 
 .chart-value {
   fill: var(--ink);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
 }
 
 .chart-label {
   fill: var(--muted);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
 }
 
 .top-number-caption {
   margin: 0;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 11px;
   text-align: right;
 }
 
@@ -788,23 +792,24 @@ body.theme-dark tbody tr:hover {
   }
 
   .top-number-chart {
-    padding: 8px 8px 6px;
+    padding: 7px 7px 5px;
+    max-width: none;
   }
 
   .chart-grid-line text {
-    font-size: 9px;
+    font-size: 8px;
   }
 
   .chart-value {
-    font-size: 9px;
+    font-size: 8px;
   }
 
   .chart-label {
-    font-size: 10px;
+    font-size: 9px;
   }
 
   .top-number-caption {
     text-align: left;
-    font-size: 11px;
+    font-size: 10px;
   }
 }
