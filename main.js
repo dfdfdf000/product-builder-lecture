@@ -331,25 +331,23 @@ const renderTopNumbers = () => {
   }
 
   const maxFreq = Math.max(...ranking.map((num) => freq[num]), 1);
-  const width = 316;
-  const height = 186;
-  const padTop = 12;
-  const padRight = 10;
-  const padBottom = 30;
-  const padLeft = 28;
+  const width = 272;
+  const height = 144;
+  const padTop = 8;
+  const padRight = 8;
+  const padBottom = 24;
+  const padLeft = 14;
   const plotWidth = width - padLeft - padRight;
   const plotHeight = height - padTop - padBottom;
   const step = plotWidth / ranking.length;
-  const barWidth = Math.max(12, Math.min(22, step * 0.58));
+  const barWidth = Math.max(10, Math.min(16, step * 0.52));
 
-  const gridLines = Array.from({ length: 4 }, (_, idx) => {
-    const ratio = idx / 3;
+  const gridLines = Array.from({ length: 3 }, (_, idx) => {
+    const ratio = idx / 2;
     const y = padTop + plotHeight - (plotHeight * ratio);
-    const value = Math.round(maxFreq * ratio);
     return `
       <g class="chart-grid-line">
         <line x1="${padLeft}" y1="${y.toFixed(2)}" x2="${(width - padRight).toFixed(2)}" y2="${y.toFixed(2)}" />
-        <text x="${(padLeft - 6).toFixed(2)}" y="${(y + 4).toFixed(2)}" text-anchor="end">${value}</text>
       </g>
     `;
   }).join('');
@@ -364,9 +362,10 @@ const renderTopNumbers = () => {
     const fill = getBallColor(num);
     return `
       <g class="chart-bar-group">
-        <rect class="chart-bar" x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${barWidth.toFixed(2)}" height="${barHeight.toFixed(2)}" rx="5" ry="5" style="fill:${fill}"></rect>
-        <text class="chart-value" x="${centerX.toFixed(2)}" y="${(y - 6).toFixed(2)}" text-anchor="middle">${value}</text>
-        <text class="chart-label" x="${centerX.toFixed(2)}" y="${(padTop + plotHeight + 16).toFixed(2)}" text-anchor="middle">${num}</text>
+        <rect class="chart-bar" x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${barWidth.toFixed(2)}" height="${barHeight.toFixed(2)}" rx="4" ry="4" style="fill:${fill}">
+          <title>${num}번 ${value}회</title>
+        </rect>
+        <text class="chart-label" x="${centerX.toFixed(2)}" y="${(padTop + plotHeight + 14).toFixed(2)}" text-anchor="middle">${num}</text>
       </g>
     `;
   }).join('');
@@ -377,7 +376,7 @@ const renderTopNumbers = () => {
       <line class="chart-axis" x1="${padLeft}" y1="${(padTop + plotHeight).toFixed(2)}" x2="${(width - padRight).toFixed(2)}" y2="${(padTop + plotHeight).toFixed(2)}"></line>
       ${bars}
     </svg>
-    <p class="top-number-caption">상위 8개 번호 출현 횟수 그래프</p>
+    <p class="top-number-caption">상위 8개 번호 (막대 높이=출현 횟수)</p>
   `;
 };
 
