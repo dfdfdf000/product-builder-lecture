@@ -567,6 +567,7 @@ body.theme-dark .panel:hover {
   display: grid;
   gap: 8px;
   align-content: start;
+  justify-items: start;
 }
 
 .muted {
@@ -581,11 +582,12 @@ body.theme-dark .panel:hover {
   padding: 10px 10px 8px;
   display: grid;
   gap: 8px;
-  max-width: 424px;
+  max-width: 450px;
+  margin-left: -6px;
 }
 
 .top-number-svg {
-  width: min(100%, 396px);
+  width: min(100%, 420px);
   height: auto;
   display: block;
   overflow: hidden;
@@ -631,7 +633,7 @@ body.theme-dark .panel:hover {
   margin: 0;
   color: var(--muted);
   font-size: 11px;
-  text-align: right;
+  text-align: left;
 }
 
 .table-wrap {
@@ -839,6 +841,7 @@ body.theme-dark tbody tr:hover {
 
   .top-number-chart {
     padding: 6px 6px 4px;
+    margin-left: 0;
     max-width: none;
   }
 
