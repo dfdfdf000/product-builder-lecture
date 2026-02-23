@@ -89,7 +89,6 @@ body {
 
 .hero {
   padding: 70px 20px 30px;
-  position: relative;
 }
 
 .hero-inner {
@@ -128,17 +127,14 @@ h1 {
 }
 
 .quick-links {
-  position: absolute;
-  top: 22px;
-  right: 20px;
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
   font-size: 13px;
-  max-width: 60%;
   justify-content: flex-end;
   text-align: right;
-  z-index: 1;
+  width: 100%;
+  margin: 0 0 18px;
 }
 
 .quick-links a {
@@ -570,11 +566,9 @@ th, td {
   }
 
   .quick-links {
-    top: 16px;
-    right: 12px;
-    max-width: 100%;
     font-size: 12px;
     gap: 10px;
+    margin-bottom: 14px;
   }
 
   .recommendation-label {
