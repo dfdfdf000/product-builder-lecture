@@ -25,27 +25,52 @@ const MAX_NUMBER = 45;
 const SET_COUNT = 5;
 const PAGE_SIZE = 20;
 const HISTORY_LIMIT = 8;
+const STORAGE_KEY = 'recommendationHistory';
 const DATA_URL = '/data/lotto.json';
+const MODE_LABELS = {
+  hot: '핫 넘버 집중',
+  cold: '콜드+랜덤 믹스',
+  balanced: '밸런스 조합'
+};
+
+const refs = {
+  generateBtn: document.getElementById('generateBtn'),
+  recommendations: document.getElementById('recommendations'),
+  historyBody: document.getElementById('historyBody'),
+  rangeText: document.getElementById('rangeText'),
+  dataUpdated: document.getElementById('dataUpdated'),
+  topNumbers: document.getElementById('topNumbers'),
+  prevPage: document.getElementById('prevPage'),
+  nextPage: document.getElementById('nextPage'),
+  pageNumbers: document.getElementById('pageNumbers'),
+  pastRecommendations: document.getElementById('pastRecommendations'),
+  clearHistoryBtn: document.getElementById('clearHistoryBtn')
+};
+
+if (!refs.generateBtn || !refs.recommendations || !refs.historyBody || !refs.rangeText || !refs.topNumbers) {
+  throw new Error('필수 DOM 요소를 찾을 수 없습니다.');
+}
 
 let draws = [...SAMPLE_DRAWS];
-
-const generateBtn = document.getElementById('generateBtn');
-const recommendationsEl = document.getElementById('recommendations');
-const historyBody = document.getElementById('historyBody');
-const rangeText = document.getElementById('rangeText');
-const dataUpdated = document.getElementById('dataUpdated');
-const topNumbersEl = document.getElementById('topNumbers');
-const prevPageBtn = document.getElementById('prevPage');
-const nextPageBtn = document.getElementById('nextPage');
-const pageNumbers = document.getElementById('pageNumbers');
-const pastRecommendationsEl = document.getElementById('pastRecommendations');
-const clearHistoryBtn = document.getElementById('clearHistoryBtn');
 let currentPage = 1;
+
+const toPadded = (value) => String(value).padStart(2, '0');
+
+const shuffle = (arr) => {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+};
 
 const getMode = () => {
   const selected = document.querySelector('input[name="mode"]:checked');
   return selected ? selected.value : 'hot';
 };
+
+const allNumbers = () => Array.from({ length: MAX_NUMBER }, (_, idx) => idx + 1);
 
 const countFrequency = () => {
   const freq = Array.from({ length: MAX_NUMBER + 1 }, () => 0);
@@ -57,56 +82,66 @@ const countFrequency = () => {
   return freq;
 };
 
+const weightedPickUnique = (pool, weights, size) => {
+  const available = [...pool];
+  const picked = [];
 
-const pickWeighted = (pool, weights, count) => {
-  const picked = new Set();
-  while (picked.size < count && pool.length > 0) {
-    const total = pool.reduce((sum, n) => sum + weights[n], 0);
-    let r = Math.random() * total;
-    for (const n of pool) {
-      r -= weights[n];
-      if (r <= 0) {
-        picked.add(n);
+  while (picked.length < size && available.length > 0) {
+    const total = available.reduce((sum, num) => sum + Math.max(1, weights[num]), 0);
+    let cursor = Math.random() * total;
+    let targetIndex = 0;
+
+    for (let i = 0; i < available.length; i += 1) {
+      cursor -= Math.max(1, weights[available[i]]);
+      if (cursor <= 0) {
+        targetIndex = i;
         break;
       }
     }
+
+    picked.push(available[targetIndex]);
+    available.splice(targetIndex, 1);
   }
-  return Array.from(picked);
+
+  return picked;
 };
 
-const shuffle = (arr) => arr.sort(() => Math.random() - 0.5);
-
 const generateHotSet = (freq) => {
-  const top = [...Array(MAX_NUMBER).keys()].map((n) => n + 1)
+  const topPool = allNumbers()
     .sort((a, b) => freq[b] - freq[a])
-    .slice(0, 25);
-  const weights = freq.map((v) => (v === 0 ? 1 : v));
-  const picked = pickWeighted(top, weights, 6);
+    .slice(0, 24);
+
+  const picked = weightedPickUnique(topPool, freq, 6);
+  const fillPool = allNumbers();
+
   while (picked.length < 6) {
-    const next = Math.floor(Math.random() * MAX_NUMBER) + 1;
-    if (!picked.includes(next)) picked.push(next);
+    const fallback = fillPool[Math.floor(Math.random() * fillPool.length)];
+    if (!picked.includes(fallback)) {
+      picked.push(fallback);
+    }
   }
+
   return picked.sort((a, b) => a - b);
 };
 
 const generateColdSet = (freq) => {
-  const sorted = [...Array(MAX_NUMBER).keys()].map((n) => n + 1)
-    .sort((a, b) => freq[a] - freq[b]);
-  const cold = sorted.slice(0, 18);
-  const mixed = [...cold, ...sorted.slice(18, 30)];
-  const picked = shuffle(mixed).slice(0, 6);
+  const sorted = allNumbers().sort((a, b) => freq[a] - freq[b]);
+  const pool = [...sorted.slice(0, 20), ...sorted.slice(20, 30)];
+  const picked = shuffle(pool).slice(0, 6);
   return picked.sort((a, b) => a - b);
 };
 
 const generateBalancedSet = () => {
-  const low = shuffle([...Array(22).keys()].map((n) => n + 1)).slice(0, 3);
-  const high = shuffle([...Array(23).keys()].map((n) => n + 23)).slice(0, 3);
-  const combined = [...low, ...high];
-  const odds = combined.filter((n) => n % 2 === 1);
-  if (odds.length < 2 || odds.length > 4) {
-    return generateBalancedSet();
+  for (let attempt = 0; attempt < 80; attempt += 1) {
+    const low = shuffle(Array.from({ length: 22 }, (_, idx) => idx + 1)).slice(0, 3);
+    const high = shuffle(Array.from({ length: 23 }, (_, idx) => idx + 23)).slice(0, 3);
+    const candidate = [...low, ...high];
+    const oddCount = candidate.filter((num) => num % 2 === 1).length;
+    if (oddCount >= 2 && oddCount <= 4) {
+      return candidate.sort((a, b) => a - b);
+    }
   }
-  return combined.sort((a, b) => a - b);
+  return shuffle(allNumbers()).slice(0, 6).sort((a, b) => a - b);
 };
 
 const generateSetByMode = (mode, freq) => {
@@ -116,17 +151,15 @@ const generateSetByMode = (mode, freq) => {
 };
 
 const pickBonus = (numbers, freq) => {
-  const pool = [...Array(MAX_NUMBER).keys()].map((n) => n + 1).filter((n) => !numbers.includes(n));
+  const pool = allNumbers().filter((num) => !numbers.includes(num));
   if (pool.length === 0) return null;
-  if (!freq) {
-    return pool[Math.floor(Math.random() * pool.length)];
-  }
-  const weights = freq.map((v) => (v === 0 ? 1 : v));
-  const total = pool.reduce((sum, n) => sum + weights[n], 0);
-  let r = Math.random() * total;
-  for (const n of pool) {
-    r -= weights[n];
-    if (r <= 0) return n;
+
+  const total = pool.reduce((sum, num) => sum + Math.max(1, freq[num]), 0);
+  let cursor = Math.random() * total;
+
+  for (let i = 0; i < pool.length; i += 1) {
+    cursor -= Math.max(1, freq[pool[i]]);
+    if (cursor <= 0) return pool[i];
   }
   return pool[0];
 };
@@ -150,97 +183,133 @@ const getBallColor = (num) => {
 const createBall = (num) => {
   const ball = document.createElement('span');
   ball.className = `number-ball ${getBallClass(num)}`;
-  ball.textContent = num;
+  ball.textContent = String(num);
   return ball;
 };
 
-const createBonusSeparator = () => {
+const createBonusSep = () => {
   const sep = document.createElement('span');
   sep.className = 'bonus-sep';
   sep.textContent = '+';
   return sep;
 };
 
+const createSetRow = (set, setIdx) => {
+  const row = document.createElement('div');
+  row.className = 'recommendation-row';
+
+  const label = document.createElement('span');
+  label.className = 'recommendation-label';
+  label.textContent = `SET ${setIdx + 1}`;
+  row.appendChild(label);
+
+  set.numbers.forEach((num) => {
+    row.appendChild(createBall(num));
+  });
+
+  if (set.bonus !== null) {
+    row.appendChild(createBonusSep());
+    row.appendChild(createBall(set.bonus));
+  }
+
+  return row;
+};
+
 const generateRecommendationSets = () => {
   const mode = getMode();
   const freq = countFrequency();
-  const sets = [];
-
-  for (let i = 0; i < SET_COUNT; i += 1) {
+  const sets = Array.from({ length: SET_COUNT }, () => {
     const numbers = generateSetByMode(mode, freq);
-    const bonus = pickBonus(numbers, freq);
-    sets.push({ numbers, bonus });
-  }
+    return {
+      numbers,
+      bonus: pickBonus(numbers, freq)
+    };
+  });
   return { mode, sets };
 };
 
-const renderRecommendationSets = (sets) => {
-  recommendationsEl.innerHTML = '';
-  sets.forEach((set, idx) => {
-    const row = document.createElement('div');
-    row.className = 'recommendation-row';
+const renderRecommendationSets = (sets, mountEl) => {
+  mountEl.innerHTML = '';
+  const fragment = document.createDocumentFragment();
+  sets.forEach((set, idx) => fragment.appendChild(createSetRow(set, idx)));
+  mountEl.appendChild(fragment);
+};
 
-    const label = document.createElement('span');
-    label.className = 'recommendation-label';
-    label.textContent = `SET ${idx + 1}`;
+const normalizeHistoryRecord = (item) => {
+  if (!item || !Array.isArray(item.sets) || !item.ts) return null;
+  const mode = typeof item.mode === 'string' ? item.mode : 'hot';
+  const modeLabel = MODE_LABELS[mode] || item.modeLabel || mode;
+  const sets = item.sets
+    .map((set) => {
+      if (!set || !Array.isArray(set.numbers)) return null;
+      const numbers = set.numbers
+        .map((num) => Number(num))
+        .filter((num) => Number.isInteger(num) && num >= 1 && num <= MAX_NUMBER)
+        .slice(0, 6)
+        .sort((a, b) => a - b);
+      if (numbers.length !== 6) return null;
+      const bonus = Number.isInteger(set.bonus) && set.bonus >= 1 && set.bonus <= MAX_NUMBER ? set.bonus : null;
+      return { numbers, bonus };
+    })
+    .filter(Boolean);
 
-    row.appendChild(label);
-    set.numbers.forEach((num) => {
-      row.appendChild(createBall(num));
-    });
-    if (set.bonus !== null) {
-      row.appendChild(createBonusSeparator());
-      row.appendChild(createBall(set.bonus));
-    }
-
-    recommendationsEl.appendChild(row);
-  });
+  if (sets.length === 0) return null;
+  return { ts: item.ts, mode, modeLabel, sets };
 };
 
 const getRecommendationHistory = () => {
   try {
-    const raw = localStorage.getItem('recommendationHistory');
-    const list = raw ? JSON.parse(raw) : [];
-    if (!Array.isArray(list)) {
-      localStorage.removeItem('recommendationHistory');
-      return [];
-    }
-    const trimmed = list.slice(0, HISTORY_LIMIT);
-    if (trimmed.length !== list.length) {
-      localStorage.setItem('recommendationHistory', JSON.stringify(trimmed));
-    }
-    return trimmed;
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .map(normalizeHistoryRecord)
+      .filter(Boolean)
+      .slice(0, HISTORY_LIMIT);
   } catch {
-    localStorage.removeItem('recommendationHistory');
     return [];
   }
 };
 
-const saveRecommendationHistory = (record) => {
-  const list = getRecommendationHistory();
-  list.unshift(record);
-  const trimmed = list.slice(0, HISTORY_LIMIT);
-  localStorage.setItem('recommendationHistory', JSON.stringify(trimmed));
+const setRecommendationHistory = (list) => {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list.slice(0, HISTORY_LIMIT)));
+};
+
+const saveRecommendationHistory = (mode, sets) => {
+  const history = getRecommendationHistory();
+  history.unshift({
+    ts: new Date().toISOString(),
+    mode,
+    modeLabel: MODE_LABELS[mode] || mode,
+    sets
+  });
+  setRecommendationHistory(history);
 };
 
 const renderPastRecommendations = () => {
-  if (!pastRecommendationsEl) return;
-  pastRecommendationsEl.innerHTML = '';
-  const list = getRecommendationHistory();
-  if (list.length === 0) {
-    pastRecommendationsEl.innerHTML = '<p class="muted">아직 저장된 추천 기록이 없습니다.</p>';
+  if (!refs.pastRecommendations) return;
+
+  const history = getRecommendationHistory();
+  refs.pastRecommendations.innerHTML = '';
+
+  if (history.length === 0) {
+    refs.pastRecommendations.innerHTML = '<p class="muted">아직 저장된 추천 기록이 없습니다.</p>';
     return;
   }
 
-  list.forEach((item, idx) => {
+  const fragment = document.createDocumentFragment();
+
+  history.forEach((item, idx) => {
     const card = document.createElement('div');
     card.className = 'past-card';
 
-    const label = document.createElement('div');
-    label.className = 'recommendation-label';
+    const dateLabel = document.createElement('div');
+    dateLabel.className = 'recommendation-label';
     const date = new Date(item.ts);
-    label.textContent = `${idx + 1}. ${date.toLocaleString('ko-KR')} · ${item.modeLabel}`;
-    card.appendChild(label);
+    const readable = Number.isNaN(date.getTime()) ? item.ts : date.toLocaleString('ko-KR');
+    dateLabel.textContent = `${idx + 1}. ${readable} · ${item.modeLabel}`;
+    card.appendChild(dateLabel);
 
     const setsWrap = document.createElement('div');
     setsWrap.className = 'past-sets';
@@ -254,11 +323,9 @@ const renderPastRecommendations = () => {
       setLabel.textContent = `SET ${setIdx + 1}`;
       row.appendChild(setLabel);
 
-      set.numbers.forEach((num) => {
-        row.appendChild(createBall(num));
-      });
+      set.numbers.forEach((num) => row.appendChild(createBall(num)));
       if (set.bonus !== null) {
-        row.appendChild(createBonusSeparator());
+        row.appendChild(createBonusSep());
         row.appendChild(createBall(set.bonus));
       }
 
@@ -266,181 +333,209 @@ const renderPastRecommendations = () => {
     });
 
     card.appendChild(setsWrap);
-    pastRecommendationsEl.appendChild(card);
+    fragment.appendChild(card);
   });
+
+  refs.pastRecommendations.appendChild(fragment);
 };
 
 const renderRecommendations = ({ save = false } = {}) => {
   const { mode, sets } = generateRecommendationSets();
-  const modeLabelMap = {
-    hot: '핫 넘버 집중',
-    cold: '콜드+랜덤 믹스',
-    balanced: '밸런스 조합'
-  };
-  renderRecommendationSets(sets);
+  renderRecommendationSets(sets, refs.recommendations);
   if (save) {
-    saveRecommendationHistory({
-      ts: new Date().toISOString(),
-      mode,
-      modeLabel: modeLabelMap[mode] || mode,
-      sets
-    });
+    saveRecommendationHistory(mode, sets);
     renderPastRecommendations();
   }
 };
 
 const renderHistory = () => {
-  historyBody.innerHTML = '';
   const sorted = [...draws].sort((a, b) => b.round - a.round);
   const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
   currentPage = Math.min(Math.max(currentPage, 1), totalPages);
   const start = (currentPage - 1) * PAGE_SIZE;
-  const pageItems = sorted.slice(start, start + PAGE_SIZE);
+  const rows = sorted.slice(start, start + PAGE_SIZE);
 
-  pageItems.forEach((draw) => {
+  refs.historyBody.innerHTML = '';
+  const rowFragment = document.createDocumentFragment();
+
+  rows.forEach((draw) => {
     const tr = document.createElement('tr');
-    const numbers = draw.nums.map((n) => n.toString().padStart(2, '0')).join(', ');
-
     tr.innerHTML = `
       <td>${draw.round}</td>
       <td>${draw.date}</td>
-      <td>${numbers}</td>
-      <td>${draw.bonus.toString().padStart(2, '0')}</td>
+      <td>${draw.nums.map((num) => toPadded(num)).join(', ')}</td>
+      <td>${toPadded(draw.bonus)}</td>
     `;
-    historyBody.appendChild(tr);
+    rowFragment.appendChild(tr);
   });
+
+  refs.historyBody.appendChild(rowFragment);
 
   const minRound = sorted[sorted.length - 1]?.round ?? '-';
   const maxRound = sorted[0]?.round ?? '-';
-  rangeText.textContent = `${minRound}회 ~ ${maxRound}회 (${sorted.length}개 회차)`;
+  refs.rangeText.textContent = `${minRound}회 ~ ${maxRound}회 (${sorted.length}개 회차)`;
 
-  if (pageNumbers) {
-    pageNumbers.innerHTML = '';
-    for (let i = 1; i <= totalPages; i += 1) {
+  if (refs.pageNumbers) {
+    refs.pageNumbers.innerHTML = '';
+    const pageFragment = document.createDocumentFragment();
+    for (let page = 1; page <= totalPages; page += 1) {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.textContent = i;
-      if (i === currentPage) btn.classList.add('active');
+      btn.textContent = String(page);
+      if (page === currentPage) btn.classList.add('active');
       btn.addEventListener('click', () => {
-        currentPage = i;
+        currentPage = page;
         renderHistory();
       });
-      pageNumbers.appendChild(btn);
+      pageFragment.appendChild(btn);
     }
+    refs.pageNumbers.appendChild(pageFragment);
   }
-  if (prevPageBtn) {
-    prevPageBtn.disabled = currentPage <= 1;
-  }
-  if (nextPageBtn) {
-    nextPageBtn.disabled = currentPage >= totalPages;
-  }
+
+  if (refs.prevPage) refs.prevPage.disabled = currentPage <= 1;
+  if (refs.nextPage) refs.nextPage.disabled = currentPage >= totalPages;
 };
 
 const renderTopNumbers = () => {
+  if (!refs.topNumbers) return;
+
   const freq = countFrequency();
-  const ranking = [...Array(MAX_NUMBER).keys()].map((n) => n + 1)
+  const ranking = allNumbers()
     .sort((a, b) => freq[b] - freq[a])
     .slice(0, 8);
-  if (!topNumbersEl) return;
+
   if (ranking.length === 0) {
-    topNumbersEl.innerHTML = '<p class="muted">표시할 데이터가 없습니다.</p>';
+    refs.topNumbers.innerHTML = '<p class="muted">표시할 데이터가 없습니다.</p>';
     return;
   }
 
   const maxFreq = Math.max(...ranking.map((num) => freq[num]), 1);
   const width = 420;
   const height = 236;
-  const padTop = 26;
+  const padTop = 24;
   const padRight = 14;
   const padBottom = 38;
   const padLeft = 22;
-  const plotWidth = width - padLeft - padRight;
-  const plotHeight = height - padTop - padBottom;
-  const step = plotWidth / ranking.length;
-  const barWidth = Math.max(15, Math.min(24, step * 0.64));
+  const plotW = width - padLeft - padRight;
+  const plotH = height - padTop - padBottom;
+  const step = plotW / ranking.length;
+  const barW = Math.max(15, Math.min(24, step * 0.64));
 
   const gridLines = Array.from({ length: 3 }, (_, idx) => {
     const ratio = idx / 2;
-    const y = padTop + plotHeight - (plotHeight * ratio);
-    return `
-      <g class="chart-grid-line">
-        <line x1="${padLeft}" y1="${y.toFixed(2)}" x2="${(width - padRight).toFixed(2)}" y2="${y.toFixed(2)}" />
-      </g>
-    `;
+    const y = padTop + plotH - plotH * ratio;
+    return `<g class="chart-grid-line"><line x1="${padLeft}" y1="${y.toFixed(2)}" x2="${(width - padRight).toFixed(2)}" y2="${y.toFixed(2)}"/></g>`;
   }).join('');
 
-  const bars = ranking.map((num, idx) => {
-    const value = freq[num];
-    const ratio = value / maxFreq;
-    const barHeight = Math.max(4, ratio * plotHeight);
-    const x = padLeft + (idx * step) + ((step - barWidth) / 2);
-    const y = padTop + plotHeight - barHeight;
-    const centerX = x + (barWidth / 2);
-    const fill = getBallColor(num);
-    const countY = Math.max(12, y - 6);
-    return `
-      <g class="chart-bar-group">
-        <rect class="chart-bar" x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${barWidth.toFixed(2)}" height="${barHeight.toFixed(2)}" rx="4" ry="4" style="fill:${fill}">
-          <title>${num}번 ${value}회</title>
-        </rect>
-        <text class="chart-count" x="${centerX.toFixed(2)}" y="${countY.toFixed(2)}" text-anchor="middle">${value}회</text>
-        <text class="chart-label" x="${centerX.toFixed(2)}" y="${(padTop + plotHeight + 18).toFixed(2)}" text-anchor="middle">${num}</text>
-      </g>
-    `;
-  }).join('');
+  const bars = ranking
+    .map((num, idx) => {
+      const value = freq[num];
+      const ratio = value / maxFreq;
+      const barH = Math.max(4, plotH * ratio);
+      const x = padLeft + idx * step + (step - barW) / 2;
+      const y = padTop + plotH - barH;
+      const cx = x + barW / 2;
+      const fill = getBallColor(num);
+      const countY = Math.max(12, y - 6);
 
-  topNumbersEl.innerHTML = `
+      return `
+        <g class="chart-bar-group">
+          <rect class="chart-bar" x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${barW.toFixed(2)}" height="${barH.toFixed(2)}" rx="4" ry="4" style="fill:${fill}">
+            <title>${num}번 ${value}회</title>
+          </rect>
+          <text class="chart-count" x="${cx.toFixed(2)}" y="${countY.toFixed(2)}" text-anchor="middle">${value}회</text>
+          <text class="chart-label" x="${cx.toFixed(2)}" y="${(padTop + plotH + 18).toFixed(2)}" text-anchor="middle">${num}</text>
+        </g>
+      `;
+    })
+    .join('');
+
+  refs.topNumbers.innerHTML = `
     <svg class="top-number-svg" viewBox="0 0 ${width} ${height}" aria-hidden="true">
       ${gridLines}
-      <line class="chart-axis" x1="${padLeft}" y1="${(padTop + plotHeight).toFixed(2)}" x2="${(width - padRight).toFixed(2)}" y2="${(padTop + plotHeight).toFixed(2)}"></line>
+      <line class="chart-axis" x1="${padLeft}" y1="${(padTop + plotH).toFixed(2)}" x2="${(width - padRight).toFixed(2)}" y2="${(padTop + plotH).toFixed(2)}"></line>
       ${bars}
     </svg>
     <p class="top-number-caption">상위 8개 번호 출현 횟수 그래프</p>
   `;
 };
 
+const normalizeDrawRecord = (item) => {
+  if (!item || !Array.isArray(item.nums)) return null;
+  const round = Number(item.round);
+  const bonus = Number(item.bonus);
+  const nums = item.nums
+    .map((num) => Number(num))
+    .filter((num) => Number.isInteger(num) && num >= 1 && num <= MAX_NUMBER)
+    .slice(0, 6);
+
+  if (!Number.isInteger(round) || round <= 0) return null;
+  if (!Number.isInteger(bonus) || bonus < 1 || bonus > MAX_NUMBER) return null;
+  if (nums.length !== 6) return null;
+
+  return {
+    round,
+    date: String(item.date || ''),
+    nums: nums.sort((a, b) => a - b),
+    bonus
+  };
+};
+
 const loadDrawsFromJson = async () => {
-  rangeText.textContent = '로또 데이터를 불러오는 중...';
+  refs.rangeText.textContent = '로또 데이터를 불러오는 중...';
   try {
     const res = await fetch(DATA_URL, { cache: 'no-store' });
-    if (!res.ok) throw new Error('data fetch failed');
+    if (!res.ok) throw new Error(`status ${res.status}`);
     const data = await res.json();
     if (!Array.isArray(data.draws) || data.draws.length === 0) {
-      throw new Error('invalid data');
+      throw new Error('invalid draw list');
     }
-    draws = data.draws;
-    if (dataUpdated) {
-      dataUpdated.textContent = `데이터 업데이트: ${data.updatedAt?.slice(0, 10) || '-'} · ${data.count}개 회차`;
+
+    const normalized = data.draws.map(normalizeDrawRecord).filter(Boolean);
+    if (normalized.length === 0) {
+      throw new Error('normalized draw list empty');
+    }
+
+    draws = normalized;
+    if (refs.dataUpdated) {
+      refs.dataUpdated.textContent = `데이터 업데이트: ${String(data.updatedAt || '').slice(0, 10) || '-'} · ${normalized.length}개 회차`;
     }
   } catch (err) {
     console.warn('데이터 로딩 실패, 샘플 데이터를 사용합니다.', err);
-    rangeText.textContent = '데이터 로딩 실패: 샘플 데이터를 표시합니다.';
     draws = [...SAMPLE_DRAWS];
+    refs.rangeText.textContent = '데이터 로딩 실패: 샘플 데이터를 표시합니다.';
+    if (refs.dataUpdated) {
+      refs.dataUpdated.textContent = `데이터 업데이트: ${new Date().toISOString().slice(0, 10)} · ${draws.length}개 회차`;
+    }
   }
+
   renderRecommendations();
   renderHistory();
   renderTopNumbers();
   renderPastRecommendations();
 };
 
-// 추천 방식 선택만으로는 결과를 갱신하지 않음
+refs.generateBtn.addEventListener('click', () => {
+  renderRecommendations({ save: true });
+});
 
-generateBtn.addEventListener('click', () => renderRecommendations({ save: true }));
-if (prevPageBtn) {
-  prevPageBtn.addEventListener('click', () => {
+if (refs.prevPage) {
+  refs.prevPage.addEventListener('click', () => {
     currentPage -= 1;
     renderHistory();
   });
 }
-if (nextPageBtn) {
-  nextPageBtn.addEventListener('click', () => {
+
+if (refs.nextPage) {
+  refs.nextPage.addEventListener('click', () => {
     currentPage += 1;
     renderHistory();
   });
 }
-if (clearHistoryBtn) {
-  clearHistoryBtn.addEventListener('click', () => {
-    localStorage.removeItem('recommendationHistory');
+
+if (refs.clearHistoryBtn) {
+  refs.clearHistoryBtn.addEventListener('click', () => {
+    localStorage.removeItem(STORAGE_KEY);
     renderPastRecommendations();
   });
 }
