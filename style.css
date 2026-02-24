@@ -107,11 +107,14 @@ body::before {
 }
 
 .hero {
+  max-width: 1100px;
+  margin: 0 auto;
   padding: 74px 20px 34px;
 }
 
 .hero-inner {
   max-width: 1100px;
+  width: 100%;
   margin: 0 auto;
   text-align: left;
   background: linear-gradient(145deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.28));
@@ -904,19 +907,19 @@ body.theme-dark tbody tr:hover {
 
   .pagination {
     gap: 8px;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     justify-content: space-between;
   }
 
   .pagination > .btn {
-    flex: 0 0 auto;
-    min-width: 92px;
+    flex: 1 1 calc(50% - 4px);
+    min-width: 0;
     padding: 10px 12px;
   }
 
   .page-numbers {
-    flex: 1 1 auto;
-    min-width: 0;
+    order: 3;
+    width: 100%;
     justify-content: center;
     row-gap: 6px;
   }
