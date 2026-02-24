@@ -56,6 +56,15 @@ body.theme-dark {
   --grid-color: rgba(148, 163, 184, 0.1);
 }
 
+html {
+  background-color: #e9f4fb;
+  overscroll-behavior-y: none;
+}
+
+html:has(body.theme-dark) {
+  background-color: #040b18;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -65,10 +74,13 @@ body.theme-dark {
 body {
   font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', system-ui, sans-serif;
   background: var(--bg-gradient);
+  background-color: var(--bg);
   color: var(--ink);
   min-height: 100vh;
+  min-height: 100dvh;
   line-height: 1.55;
   overflow-x: hidden;
+  overscroll-behavior-y: none;
   position: relative;
 }
 
@@ -822,9 +834,10 @@ body.theme-dark tbody tr:hover {
   }
 
   .home-container {
-    padding-top: 26px;
-    padding-right: calc(16px + env(safe-area-inset-right));
-    padding-left: calc(16px + env(safe-area-inset-left));
+    padding: calc(16px + env(safe-area-inset-top))
+      calc(16px + env(safe-area-inset-right))
+      calc(16px + env(safe-area-inset-bottom))
+      calc(16px + env(safe-area-inset-left));
   }
 
   .hero-inner {
