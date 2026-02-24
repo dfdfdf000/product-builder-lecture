@@ -873,12 +873,24 @@ body.theme-dark tbody tr:hover {
   .quick-links {
     font-size: 12px;
     gap: 10px;
-    margin-top: 6px;
+    margin-top: 10px;
+  }
+
+  .hero-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
   }
 
   .hero-actions .btn {
     width: 100%;
     justify-content: center;
+    min-height: 44px;
+  }
+
+  .intro-panel {
+    padding-bottom: 22px;
   }
 
   .recommendation-label {
