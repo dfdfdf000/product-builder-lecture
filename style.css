@@ -56,8 +56,16 @@ body.theme-dark {
   --grid-color: rgba(148, 163, 184, 0.1);
 }
 
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+}
+
 html {
   background-color: #e9f4fb;
+  overflow-x: hidden;
+  overscroll-behavior: none;
   overscroll-behavior-y: none;
 }
 
@@ -76,8 +84,7 @@ body {
   background: var(--bg-gradient);
   background-color: var(--bg);
   color: var(--ink);
-  min-height: 100vh;
-  min-height: 100dvh;
+  min-height: 100%;
   line-height: 1.55;
   overflow-x: hidden;
   overscroll-behavior-y: none;
@@ -278,6 +285,7 @@ body.theme-dark .btn.ghost {
 
 .home-container {
   padding-top: 34px;
+  padding-bottom: 24px;
 }
 
 .panel {
@@ -829,7 +837,11 @@ body.theme-dark tbody tr:hover {
   }
 
   .container {
-    padding: 16px;
+    width: 100%;
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+    padding-top: 14px;
+    padding-bottom: 22px;
     gap: 16px;
   }
 
@@ -891,6 +903,8 @@ body.theme-dark tbody tr:hover {
 
   .intro-panel {
     padding-bottom: 22px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
   .recommendation-label {
