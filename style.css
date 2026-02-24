@@ -59,7 +59,10 @@ body.theme-dark {
 html,
 body {
   width: 100%;
-  min-height: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: 100svh;
+  background-color: inherit;
 }
 
 html {
@@ -67,6 +70,8 @@ html {
   overflow-x: hidden;
   overscroll-behavior: none;
   overscroll-behavior-y: none;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 html.theme-dark {
@@ -84,7 +89,9 @@ body {
   background: var(--bg-gradient);
   background-color: var(--bg);
   color: var(--ink);
-  min-height: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: 100svh;
   line-height: 1.55;
   overflow-x: hidden;
   overscroll-behavior-y: none;
@@ -285,7 +292,7 @@ body.theme-dark .btn.ghost {
 
 .home-container {
   padding-top: 34px;
-  padding-bottom: 24px;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
 }
 
 .panel {
@@ -841,13 +848,13 @@ body.theme-dark tbody tr:hover {
     padding-left: max(16px, env(safe-area-inset-left));
     padding-right: max(16px, env(safe-area-inset-right));
     padding-top: 14px;
-    padding-bottom: 22px;
+    padding-bottom: calc(22px + env(safe-area-inset-bottom));
     gap: 16px;
   }
 
   .hero-inner {
     border-radius: 22px;
-    width: calc(100% - 32px);
+    width: 100%;
     padding: 22px 16px;
   }
 
