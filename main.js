@@ -23,7 +23,7 @@ const SAMPLE_DRAWS = [
 
 const MAX_NUMBER = 45;
 const SET_COUNT = 5;
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 const HISTORY_LIMIT = 8;
 const STORAGE_KEY = 'recommendationHistory';
 const DATA_URL = '/data/lotto.json';

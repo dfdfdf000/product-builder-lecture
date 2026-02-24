@@ -408,14 +408,14 @@ h1,
 }
 
 .number-ball {
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
 }
 
@@ -776,9 +776,9 @@ tbody tr:hover {
   }
 
   .number-ball {
-    width: 28px;
-    height: 28px;
-    font-size: 11px;
+    width: 31px;
+    height: 31px;
+    font-size: 12px;
   }
 
   .recommendation-label {
