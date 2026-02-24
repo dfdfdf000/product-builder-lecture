@@ -20,6 +20,7 @@ const setDisqusTheme = (theme) => {
 
 const applyTheme = (theme) => {
   const isDark = theme === 'dark';
+  document.documentElement.classList.toggle('theme-dark', isDark);
   document.body.classList.toggle('theme-dark', isDark);
   const themeToggle = document.getElementById('themeToggle');
   if (themeToggle) {
