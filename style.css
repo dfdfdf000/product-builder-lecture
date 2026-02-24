@@ -1,4 +1,5 @@
 :root {
+  --page-gutter: 16px;
   --bg: #e9f4fb;
   --ink: #10213b;
   --muted: #506480;
@@ -72,6 +73,7 @@ body {
   min-height: 100svh;
   min-height: 100dvh;
   overflow-x: hidden;
+  overflow-y: auto;
   position: relative;
 }
 
@@ -115,11 +117,14 @@ a:hover {
 }
 
 .container {
-  width: min(1100px, calc(100% - 32px));
+  width: min(1100px, 100%);
   margin: 0 auto;
   display: grid;
   gap: 20px;
-  padding: 24px 0 calc(56px + env(safe-area-inset-bottom));
+  padding-top: 24px;
+  padding-right: var(--page-gutter);
+  padding-bottom: calc(56px + env(safe-area-inset-bottom));
+  padding-left: var(--page-gutter);
 }
 
 .home-container {
@@ -131,7 +136,7 @@ a:hover {
 }
 
 .hero-inner {
-  width: min(1100px, calc(100% - 32px));
+  width: min(1100px, calc(100% - (var(--page-gutter) * 2)));
   margin: 0 auto;
   background: linear-gradient(155deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.32));
   border: 1px solid var(--border);
@@ -677,11 +682,17 @@ tbody tr:hover {
 }
 
 @media (max-width: 720px) {
+  :root {
+    --page-gutter: 12px;
+  }
+
   .container {
-    width: min(1100px, calc(100% - 24px));
+    width: min(1100px, 100%);
     gap: 14px;
     padding-top: 14px;
+    padding-right: max(var(--page-gutter), env(safe-area-inset-right));
     padding-bottom: calc(24px + env(safe-area-inset-bottom));
+    padding-left: max(var(--page-gutter), env(safe-area-inset-left));
   }
 
   .home-container {
@@ -693,7 +704,9 @@ tbody tr:hover {
   }
 
   .hero-inner {
-    width: min(1100px, calc(100% - 24px));
+    width: auto;
+    margin-right: max(var(--page-gutter), env(safe-area-inset-right));
+    margin-left: max(var(--page-gutter), env(safe-area-inset-left));
     padding: 18px 14px;
     border-radius: 16px;
   }
