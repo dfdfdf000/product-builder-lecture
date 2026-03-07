@@ -40,6 +40,8 @@ const refs = {
   rangeText: document.getElementById('rangeText'),
   dataUpdated: document.getElementById('dataUpdated'),
   topNumbers: document.getElementById('topNumbers'),
+  insightCards: document.getElementById('insightCards'),
+  insightNotes: document.getElementById('insightNotes'),
   prevPage: document.getElementById('prevPage'),
   nextPage: document.getElementById('nextPage'),
   pageNumbers: document.getElementById('pageNumbers'),
@@ -55,6 +57,13 @@ let draws = [...SAMPLE_DRAWS];
 let currentPage = 1;
 
 const toPadded = (value) => String(value).padStart(2, '0');
+const formatDrawDateLabel = (value) => {
+  const raw = String(value || '').replace(/[^0-9]/g, '');
+  if (raw.length === 8) {
+    return `${raw.slice(0, 4)}.${raw.slice(4, 6)}.${raw.slice(6, 8)}`;
+  }
+  return String(value || '-');
+};
 
 const shuffle = (arr) => {
   const copy = [...arr];
@@ -72,9 +81,9 @@ const getMode = () => {
 
 const allNumbers = () => Array.from({ length: MAX_NUMBER }, (_, idx) => idx + 1);
 
-const countFrequency = () => {
+const countFrequency = (sourceDraws = draws) => {
   const freq = Array.from({ length: MAX_NUMBER + 1 }, () => 0);
-  draws.forEach((draw) => {
+  sourceDraws.forEach((draw) => {
     draw.nums.forEach((num) => {
       freq[num] += 1;
     });
@@ -460,6 +469,72 @@ const renderTopNumbers = () => {
   `;
 };
 
+const getTopRankedNumbers = (sourceDraws, limit = 3) => {
+  const freq = countFrequency(sourceDraws);
+  return allNumbers()
+    .map((num) => ({ num, count: freq[num] }))
+    .filter((item) => item.count > 0)
+    .sort((a, b) => b.count - a.count || a.num - b.num)
+    .slice(0, limit);
+};
+
+const renderInsights = () => {
+  if (!refs.insightCards || !refs.insightNotes) return;
+
+  const sorted = [...draws].sort((a, b) => b.round - a.round);
+  const latest = sorted[0];
+
+  if (!latest) {
+    refs.insightCards.innerHTML = '<p class="muted">표시할 데이터가 없습니다.</p>';
+    refs.insightNotes.innerHTML = '';
+    return;
+  }
+
+  const recent10 = sorted.slice(0, 10);
+  const recent20 = sorted.slice(0, 20);
+  const sum = latest.nums.reduce((acc, num) => acc + num, 0);
+  const oddCount = latest.nums.filter((num) => num % 2 === 1).length;
+  const evenCount = latest.nums.length - oddCount;
+  const lowCount = latest.nums.filter((num) => num <= 22).length;
+  const highCount = latest.nums.length - lowCount;
+  const spread = Math.max(...latest.nums) - Math.min(...latest.nums);
+  const recentTop = getTopRankedNumbers(recent10, 3);
+  const allTop = getTopRankedNumbers(sorted, 3);
+  const recentTwentyNumbers = recent20.flatMap((draw) => draw.nums);
+  const recentLow = recentTwentyNumbers.filter((num) => num <= 22).length;
+  const recentHigh = recentTwentyNumbers.length - recentLow;
+
+  refs.insightCards.innerHTML = `
+    <article class="stat-card">
+      <span class="stat-label">최신 회차</span>
+      <strong class="stat-value">${latest.round}회</strong>
+      <p class="stat-note">${formatDrawDateLabel(latest.date)} 추첨</p>
+    </article>
+    <article class="stat-card">
+      <span class="stat-label">번호 합계</span>
+      <strong class="stat-value">${sum}</strong>
+      <p class="stat-note">최소 ${Math.min(...latest.nums)} / 최대 ${Math.max(...latest.nums)} / 범위 ${spread}</p>
+    </article>
+    <article class="stat-card">
+      <span class="stat-label">구성 비율</span>
+      <strong class="stat-value">홀 ${oddCount} : 짝 ${evenCount}</strong>
+      <p class="stat-note">저구간 ${lowCount} / 고구간 ${highCount}</p>
+    </article>
+    <article class="stat-card">
+      <span class="stat-label">최근 10회 상위</span>
+      <strong class="stat-value">${recentTop.map((item) => item.num).join(', ')}</strong>
+      <p class="stat-note">${recentTop.map((item) => `${item.num}번 ${item.count}회`).join(' · ')}</p>
+    </article>
+  `;
+
+  refs.insightNotes.innerHTML = `
+    <li>최신 회차 ${latest.round}회 당첨번호는 ${latest.nums.map((num) => toPadded(num)).join(', ')}이고 보너스 번호는 ${toPadded(latest.bonus)}입니다.</li>
+    <li>최근 10회에서 가장 자주 나온 번호는 ${recentTop.map((item) => `${item.num}번(${item.count}회)`).join(', ')}입니다.</li>
+    <li>누적 데이터 상위 번호는 ${allTop.map((item) => `${item.num}번(${item.count}회)`).join(', ')}이지만, 이는 과거 출현 요약일 뿐 다음 결과를 예측하는 근거는 아닙니다.</li>
+    <li>최근 20회 기준 저구간(1~22) ${recentLow}개, 고구간(23~45) ${recentHigh}개가 나와 한쪽 구간만 지속적으로 우세하지는 않았습니다.</li>
+  `;
+};
+
 const normalizeDrawRecord = (item) => {
   if (!item || !Array.isArray(item.nums)) return null;
   const round = Number(item.round);
@@ -505,13 +580,14 @@ const loadDrawsFromJson = async () => {
     draws = [...SAMPLE_DRAWS];
     refs.rangeText.textContent = '데이터 로딩 실패: 샘플 데이터를 표시합니다.';
     if (refs.dataUpdated) {
-      refs.dataUpdated.textContent = `데이터 업데이트: ${new Date().toISOString().slice(0, 10)} · ${draws.length}개 회차`;
+      refs.dataUpdated.textContent = `데이터 업데이트: 샘플 데이터 사용 · ${draws.length}개 회차`;
     }
   }
 
   renderRecommendations();
   renderHistory();
   renderTopNumbers();
+  renderInsights();
   renderPastRecommendations();
 };
 

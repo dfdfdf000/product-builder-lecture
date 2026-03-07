@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>분석 가이드 | 로또 인사이트</title>
+  <meta name="description" content="로또 인사이트의 추천 모드, 회차표, 상위 출현 번호 그래프를 어떻게 읽어야 하는지 설명하는 분석 가이드입니다." />
+  <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
+  <meta name="theme-color" content="#06b6d4" />
+  <link rel="canonical" href="https://product-builder-lecture-365.pages.dev/guide" />
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:site_name" content="로또 인사이트" />
+  <meta property="og:title" content="분석 가이드 | 로또 인사이트" />
+  <meta property="og:description" content="로또 당첨번호 통계와 추천 모드를 어떻게 이해해야 하는지 차분하게 설명하는 가이드입니다." />
+  <meta property="og:url" content="https://product-builder-lecture-365.pages.dev/guide" />
+  <meta property="og:image" content="/og-image.svg" />
+  <meta property="og:image:alt" content="로또 인사이트 공유 이미지" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="분석 가이드 | 로또 인사이트" />
+  <meta name="twitter:description" content="추천 모드, 회차표, 업데이트 기준을 이해하는 로또 데이터 가이드" />
+  <meta name="twitter:image" content="/og-image.svg" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="preload" href="/style.css" as="style" />
+  <link rel="stylesheet" href="/style.css" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="/style.css" /></noscript>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z91EY4QN6M"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-Z91EY4QN6M');
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "로또 데이터 분석 가이드",
+      "inLanguage": "ko-KR",
+      "dateModified": "2026-03-07",
+      "author": {
+        "@type": "Organization",
+        "name": "로또 인사이트"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "로또 인사이트",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://product-builder-lecture-365.pages.dev/favicon.svg"
+        }
+      },
+      "mainEntityOfPage": "https://product-builder-lecture-365.pages.dev/guide"
+    }
+  </script>
+</head>
+<body>
+  <div class="bg-orb orb-a" aria-hidden="true"></div>
+  <div class="bg-orb orb-b" aria-hidden="true"></div>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow">Lotto Insight Lab</p>
+      <h1>분석 가이드</h1>
+      <p class="sub">추천 번호, 회차표, 빈도 그래프를 어떻게 읽어야 하는지 차분하게 설명하는 가이드입니다.</p>
+      <div class="hero-actions">
+        <a class="btn ghost" href="/">메인으로</a>
+        <button class="btn ghost" type="button" data-share-button>공유하기</button>
+        <button id="themeToggle" class="btn ghost" type="button" aria-pressed="false">다크 모드</button>
+      </div>
+      <nav class="quick-links" aria-label="바로가기">
+        <a href="/about">프로젝트 소개</a>
+        <a href="/policy">데이터 & 정책</a>
+        <a href="/privacy">개인정보 처리방침</a>
+        <a href="/terms">이용약관</a>
+        <a href="/partner">제휴 문의</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="panel" aria-labelledby="guide-why">
+      <div class="panel-header">
+        <h2 id="guide-why">왜 이 가이드가 필요한가</h2>
+        <p class="panel-desc">숫자를 보여 주는 것만으로는 충분하지 않기 때문입니다.</p>
+      </div>
+      <div class="panel-copy">
+        <p>로또 관련 페이지는 쉽게 얇은 랜딩 페이지가 되기 쉽습니다. 숫자 목록과 버튼만 있으면 한 번 클릭하고 나가는 화면이 되기 때문입니다. 로또 인사이트는 그런 형태를 피하기 위해, 통계 화면이 무엇을 의미하는지와 무엇을 의미하지 않는지까지 함께 설명하는 구조를 택했습니다.</p>
+        <p>이 가이드는 메인 도구를 더 잘 활용하도록 돕는 문서입니다. 추천 모드는 어떤 차이가 있는지, 상위 출현 번호 그래프는 어디까지 참고할 수 있는지, 과거 회차표는 어떤 목적으로 봐야 하는지를 한 페이지에서 이해할 수 있게 정리했습니다.</p>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="guide-can">
+      <div class="panel-header">
+        <h2 id="guide-can">과거 데이터로 알 수 있는 것과 없는 것</h2>
+        <p class="panel-desc">분석 도구를 오해하지 않도록 범위를 먼저 정합니다.</p>
+      </div>
+      <div class="content-grid">
+        <article class="content-card">
+          <h3>알 수 있는 것</h3>
+          <p>어떤 번호가 누적 데이터에서 자주 등장했는지, 최근 몇 회차에서 특정 구간이 더 많이 섞였는지, 홀짝이나 저고 분포가 어느 정도 균형을 보였는지는 확인할 수 있습니다.</p>
+        </article>
+        <article class="content-card">
+          <h3>알 수 없는 것</h3>
+          <p>다음 회차의 당첨번호를 확정적으로 예측할 수는 없습니다. 과거 빈도는 요약 지표일 뿐이며, 무작위 추첨이라는 본질 자체를 바꾸지 않습니다.</p>
+        </article>
+        <article class="content-card">
+          <h3>그래서 필요한 태도</h3>
+          <p>추천 번호를 정답처럼 받아들이기보다, 분포를 확인하고 스스로 선택 기준을 정리하는 참고 자료로 활용하는 편이 적절합니다.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="guide-home">
+      <div class="panel-header">
+        <h2 id="guide-home">메인 화면 읽는 순서</h2>
+        <p class="panel-desc">처음 방문했다면 아래 순서대로 보면 정보 구조가 빠르게 잡힙니다.</p>
+      </div>
+      <div class="content-grid">
+        <article class="content-card">
+          <h3>1. 데이터 범위 확인</h3>
+          <p>현재 몇 회차까지 반영됐는지 먼저 봅니다. 이 값이 최신 회차와 맞지 않으면 추천 결과도 최신 데이터가 아닐 수 있습니다.</p>
+        </article>
+        <article class="content-card">
+          <h3>2. 최신 데이터 인사이트 확인</h3>
+          <p>최신 회차 번호, 합계, 홀짝 비율, 최근 10회 상위 번호를 보면 데이터가 정상적으로 갱신됐는지 한눈에 확인할 수 있습니다.</p>
+        </article>
+        <article class="content-card">
+          <h3>3. 상위 출현 번호 그래프 확인</h3>
+          <p>그래프는 누적 분포를 요약합니다. 장기적으로 많이 나온 번호가 무엇인지 보여 주지만, 다음 회차 보장 지표로 해석하면 안 됩니다.</p>
+        </article>
+        <article class="content-card">
+          <h3>4. 회차표로 교차 검증</h3>
+          <p>회차표에서 추첨일과 번호 조합을 직접 확인하면, 그래프나 추천 모드가 어떤 원본 데이터를 바탕으로 하는지 추적할 수 있습니다.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="guide-modes">
+      <div class="panel-header">
+        <h2 id="guide-modes">추천 방식별 활용법</h2>
+        <p class="panel-desc">세 가지 추천 모드는 모두 통계 참고용이지만 성격은 조금씩 다릅니다.</p>
+      </div>
+      <div class="content-grid">
+        <article class="content-card">
+          <h3>핫 넘버 집중</h3>
+          <p>누적 빈도 상위권 숫자를 더 자주 포함하도록 설계한 모드입니다. 최근이나 장기 데이터에서 반복적으로 보였던 숫자를 우선 확인하고 싶은 경우에 적합합니다.</p>
+        </article>
+        <article class="content-card">
+          <h3>콜드+랜덤 믹스</h3>
+          <p>상대적으로 덜 나온 숫자를 앞세우되 완전히 고정하지 않고 무작위성을 섞습니다. 자주 등장한 번호에 피로감을 느끼는 사용자가 분산된 조합을 보고 싶을 때 유용합니다.</p>
+        </article>
+        <article class="content-card">
+          <h3>밸런스 조합</h3>
+          <p>홀짝과 저고 구간이 한쪽으로 쏠리지 않도록 구성합니다. 특정 번호 자체보다 숫자 분포의 균형을 우선하는 사용자에게 적합합니다.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="guide-update">
+      <div class="panel-header">
+        <h2 id="guide-update">데이터 검증과 업데이트 절차</h2>
+        <p class="panel-desc">운영자가 어떤 기준으로 최신 회차를 반영하는지 공개합니다.</p>
+      </div>
+      <ul class="bullet-list">
+        <li>공식 출처: 동행복권 회차별 당첨 결과</li>
+        <li>기본 갱신 시각: 토요일 21:00 KST</li>
+        <li>백업 재시도 시각: 토요일 21:10 KST</li>
+        <li>새 회차가 아직 공개되지 않았으면 기존 데이터를 유지하고 파일을 수정하지 않음</li>
+        <li>회차 누락 또는 보너스 번호 오류가 확인되면 데이터 파일과 정책 문서를 함께 수정</li>
+      </ul>
+    </section>
+
+    <section class="panel" aria-labelledby="guide-responsible">
+      <div class="panel-header">
+        <h2 id="guide-responsible">책임감 있게 이용하는 방법</h2>
+        <p class="panel-desc">분석 도구를 오래 운영하려면 사용자의 기대치도 현실적이어야 합니다.</p>
+      </div>
+      <div class="content-grid">
+        <article class="content-card">
+          <h3>예산을 먼저 정하기</h3>
+          <p>추천 번호를 보기 전에 지출 한도를 먼저 정해 두면 도구가 과열된 의사결정으로 이어질 가능성을 줄일 수 있습니다.</p>
+        </article>
+        <article class="content-card">
+          <h3>한 가지 기준만 맹신하지 않기</h3>
+          <p>핫 넘버, 콜드 넘버, 균형 조합은 서로 다른 시각일 뿐입니다. 어느 하나를 정답으로 보는 대신 비교용 기준으로 활용하는 편이 좋습니다.</p>
+        </article>
+        <article class="content-card">
+          <h3>항상 공식 결과를 함께 확인하기</h3>
+          <p>사이트는 공개 데이터를 기반으로 하지만, 외부 지연이나 예외가 있을 수 있으므로 최종 확인은 공식 출처와 함께 하는 것이 안전합니다.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="guide-faq">
+      <div class="panel-header">
+        <h2 id="guide-faq">FAQ</h2>
+        <p class="panel-desc">실제 이용 중 자주 생기는 질문을 정리했습니다.</p>
+      </div>
+      <div class="faq-grid">
+        <article class="content-card">
+          <h3>최신 회차가 보이지 않으면 오류인가요?</h3>
+          <p>반드시 그렇지는 않습니다. 공식 결과 공개가 늦어졌거나, 자동 동기화가 아직 재시도 구간에 있을 수 있습니다. 데이터 범위와 업데이트 날짜를 먼저 확인하세요.</p>
+        </article>
+        <article class="content-card">
+          <h3>상위 출현 번호가 다음 회차에도 유리한가요?</h3>
+          <p>상위 번호는 과거에 많이 나온 번호일 뿐입니다. 다음 회차 우세를 보장하지 않으므로 누적 분포를 이해하는 용도로 해석해야 합니다.</p>
+        </article>
+        <article class="content-card">
+          <h3>추천 기록을 저장하는 이유는 무엇인가요?</h3>
+          <p>브라우저 안에서 최근에 어떤 모드와 조합을 생성했는지 비교할 수 있게 하기 위한 기능입니다. 서버에 개인 추천 기록을 저장하지는 않습니다.</p>
+        </article>
+        <article class="content-card">
+          <h3>정책 문서를 따로 둔 이유가 있나요?</h3>
+          <p>데이터 출처, 업데이트 기준, 개인정보 처리, 이용 제한을 따로 공개해야 사용자가 도구를 신뢰할지 판단할 수 있기 때문입니다.</p>
+        </article>
+      </div>
+      <div class="section-actions">
+        <a class="btn ghost" href="/">메인 도구로 이동</a>
+        <a class="btn ghost" href="/policy">정책 문서 보기</a>
+      </div>
+    </section>
+  </main>
+
+  <script defer type="text/javascript" src="/share.js"></script>
+  <script defer type="text/javascript" src="/theme.js"></script>
+</body>
+</html>
