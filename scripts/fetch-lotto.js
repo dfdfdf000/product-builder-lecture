@@ -181,6 +181,11 @@ async function main() {
     process.exit(1);
   }
 
+  if (existing && Number(existing.latestRound) === latest) {
+    console.log(`No new round. latestRound remains ${latest}.`);
+    process.exit(0);
+  }
+
   const draws = [];
   for (let r = latest; r > Math.max(0, latest - LOAD_COUNT); r -= 1) {
     const draw = await fetchDraw(r);
